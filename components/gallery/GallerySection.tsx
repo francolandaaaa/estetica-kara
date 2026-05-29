@@ -75,7 +75,7 @@ export default function GallerySection() {
     active === 'Todos' ? galleryImages : galleryImages.filter(img => img.category === active)
 
   return (
-    <section id="galeria" className="py-28 px-6 md:px-12 lg:px-24" style={{ background: '#050505' }}>
+    <section id="galeria" className="py-28 px-6 md:px-12 lg:px-24" style={{ background: 'rgba(5,5,5,0.90)' }}>
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <motion.div

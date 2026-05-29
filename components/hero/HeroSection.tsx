@@ -8,7 +8,7 @@ const ThreeCanvas = dynamic(() => import('./ThreeCanvas'), {
   loading: () => <div className="absolute inset-0" style={{ background: '#050505' }} />,
 })
 
-const ease = [0.16, 1, 0.3, 1]
+const ease: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 const NAV_LINKS = [
   { label: 'SERVICIOS', href: '#servicios' },
@@ -18,7 +18,7 @@ const NAV_LINKS = [
 
 export default function HeroSection() {
   return (
-    <section id="inicio" className="relative h-screen overflow-hidden" style={{ background: '#050505' }}>
+    <section id="inicio" className="relative h-screen overflow-hidden" style={{ background: 'transparent' }}>
       {/* 3D Canvas */}
       <div className="absolute inset-0">
         <ThreeCanvas />
@@ -84,7 +84,7 @@ export default function HeroSection() {
         <motion.h1
           initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.4, ease, delay: 0.4 }}
+          transition={{ duration: 1.4, ease: "easeInOut", delay: 0.4 }}
           className="font-light text-white leading-none mb-3"
           style={{
             fontFamily: 'var(--font-cormorant)',
