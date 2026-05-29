@@ -3,7 +3,11 @@
     "allow": [
       "Bash(curl -s http://localhost:3000)",
       "Bash(curl -I http://localhost:3000)",
-      "PowerShell(Start-Sleep -Seconds 3; Invoke-WebRequest -Uri \"http://localhost:3000/api/send-email\" -Method POST -ContentType \"application/json\" -Body '{\"nombre\":\"Test\",\"telefono\":\"123\",\"servicio\":\"Corte\",\"fecha\":\"2026-06-01\",\"hora\":\"10:00\"}' -ErrorAction SilentlyContinue | Select-Object StatusCode, Content)"
+      "PowerShell(Start-Sleep -Seconds 3; Invoke-WebRequest -Uri \"http://localhost:3000/api/send-email\" -Method POST -ContentType \"application/json\" -Body '{\"nombre\":\"Test\",\"telefono\":\"123\",\"servicio\":\"Corte\",\"fecha\":\"2026-06-01\",\"hora\":\"10:00\"}' -ErrorAction SilentlyContinue | Select-Object StatusCode, Content)",
+      "Bash(dir C:\\\\Users\\\\Frankyboy\\\\OneDrive\\\\Escritorio\\\\barber-3d-site\\\\public\\\\gallery *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
