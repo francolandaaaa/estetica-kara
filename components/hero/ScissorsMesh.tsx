@@ -7,6 +7,7 @@ import * as THREE from 'three'
 // ── Materiales ────────────────────────────────────────────────────────────────
 const CHROME = { metalness: 0.98, roughness: 0.02, color: '#EEEEEE' } as const
 const GOLD   = { metalness: 0.92, roughness: 0.08, color: '#C9A84C' } as const
+const WINE   = { metalness: 0.86, roughness: 0.14, color: '#6B1229' } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lámina — plana, larga, muy brillante (oscurece hacia la punta)
@@ -14,15 +15,10 @@ const GOLD   = { metalness: 0.92, roughness: 0.08, color: '#C9A84C' } as const
 function Blade() {
   return (
     <group>
-      {/* Cuerpo principal — achatado en Z, ancho en X */}
+      {/* Cuerpo principal — punta afilada (radiusTop ~0) */}
       <mesh position={[0, 0.68, 0]} scale={[2.1, 1, 0.18]}>
-        <cylinderGeometry args={[0.006, 0.040, 1.36, 8]} />
+        <cylinderGeometry args={[0.001, 0.040, 1.36, 8]} />
         <meshStandardMaterial {...CHROME} emissive="#CCCCCC" emissiveIntensity={0.10} />
-      </mesh>
-      {/* Zona oscura en la punta (acero negro, primer tercio) */}
-      <mesh position={[0, 1.22, 0]} scale={[2.1, 1, 0.18]}>
-        <cylinderGeometry args={[0.006, 0.015, 0.24, 8]} />
-        <meshStandardMaterial metalness={0.98} roughness={0.02} color="#1A1A1A" emissive="#111111" emissiveIntensity={0.05} />
       </mesh>
       {/* Filo brillante */}
       <mesh position={[0.084, 0.68, 0]}>
@@ -67,22 +63,10 @@ function FingerArm() {
       <Blade />
       <HandleStrut />
 
-      {/* Anillo — marco cromo, grande, sin rotación → agujero hacia cámara */}
+      {/* Anillo — color vino, sin rotación → agujero hacia cámara */}
       <mesh position={[0, -0.57, 0]}>
         <torusGeometry args={[0.208, 0.036, 18, 64]} />
-        <meshStandardMaterial {...CHROME} emissive="#BBBBBB" emissiveIntensity={0.12} />
-      </mesh>
-      {/* Relleno rojo interior */}
-      <mesh position={[0, -0.57, 0]}>
-        <circleGeometry args={[0.170, 56]} />
-        <meshStandardMaterial
-          color="#CC1400"
-          metalness={0.55}
-          roughness={0.30}
-          side={THREE.DoubleSide}
-          emissive="#660000"
-          emissiveIntensity={0.28}
-        />
+        <meshStandardMaterial {...WINE} emissive="#1A0008" emissiveIntensity={0.15} />
       </mesh>
 
       {/* Tang / gancho curvo en la parte superior del anillo */}
@@ -103,22 +87,10 @@ function ThumbArm() {
       <Blade />
       <HandleStrut xOff={0.030} zRot={-0.09} />
 
-      {/* Anillo — ligeramente mayor, sin rotación */}
+      {/* Anillo — color vino, sin rotación */}
       <mesh position={[0.040, -0.56, 0]}>
         <torusGeometry args={[0.218, 0.036, 18, 64]} />
-        <meshStandardMaterial {...CHROME} emissive="#BBBBBB" emissiveIntensity={0.12} />
-      </mesh>
-      {/* Relleno rojo interior */}
-      <mesh position={[0.040, -0.56, 0]}>
-        <circleGeometry args={[0.180, 56]} />
-        <meshStandardMaterial
-          color="#CC1400"
-          metalness={0.55}
-          roughness={0.30}
-          side={THREE.DoubleSide}
-          emissive="#660000"
-          emissiveIntensity={0.28}
-        />
+        <meshStandardMaterial {...WINE} emissive="#1A0008" emissiveIntensity={0.15} />
       </mesh>
 
       {/* Pequeña pestaña exterior del anillo del pulgar */}
