@@ -54,7 +54,7 @@ function FingerArm() {
   return (
     <group>
       <Blade />
-      <HandleStrut cx={0.10} cy={-0.275} rot={-0.35} h={0.585} />
+      <HandleStrut cx={0.10} cy={-0.275} rot={0.35} h={0.585} />
 
       {/* Anillo dedo — desplazado +X, sin rotación → agujero hacia cámara */}
       <mesh position={[0.20, -0.55, 0]}>
@@ -82,7 +82,7 @@ function ThumbArm() {
   return (
     <group>
       <Blade />
-      <HandleStrut cx={-0.10} cy={-0.28} rot={0.34} h={0.595} />
+      <HandleStrut cx={-0.10} cy={-0.28} rot={-0.34} h={0.595} />
 
       {/* Anillo pulgar — desplazado -X, sin rotación */}
       <mesh position={[-0.20, -0.56, 0]}>
