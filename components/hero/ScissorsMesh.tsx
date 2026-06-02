@@ -4,101 +4,166 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
-const BLADE = { metalness: 0.95, roughness: 0.05, color: '#E4E4E4' } as const
-const EDGE  = { metalness: 1.00, roughness: 0.00, color: '#FFFFFF' } as const
-const SHANK = { metalness: 0.91, roughness: 0.09, color: '#D2D2D2' } as const
-const RED   = { metalness: 0.88, roughness: 0.10, color: '#C41800' } as const
-const GOLD  = { metalness: 0.90, roughness: 0.10, color: '#C9A84C' } as const
+// ── Materiales ────────────────────────────────────────────────────────────────
+const CHROME = { metalness: 0.98, roughness: 0.02, color: '#EEEEEE' } as const
+const GOLD   = { metalness: 0.92, roughness: 0.08, color: '#C9A84C' } as const
 
-/** Lámina plana y ancha — escala X:2.6 / Z:0.28 */
+// ─────────────────────────────────────────────────────────────────────────────
+// Lámina — plana, larga, muy brillante (oscurece hacia la punta)
+// ─────────────────────────────────────────────────────────────────────────────
 function Blade() {
   return (
     <group>
-      <mesh position={[0, 0.70, 0]} scale={[2.6, 1, 0.28]}>
-        <cylinderGeometry args={[0.008, 0.042, 1.40, 8]} />
-        <meshStandardMaterial {...BLADE} emissive="#999999" emissiveIntensity={0.08} />
+      {/* Cuerpo principal — achatado en Z, ancho en X */}
+      <mesh position={[0, 0.68, 0]} scale={[2.1, 1, 0.18]}>
+        <cylinderGeometry args={[0.006, 0.040, 1.36, 8]} />
+        <meshStandardMaterial {...CHROME} emissive="#CCCCCC" emissiveIntensity={0.10} />
+      </mesh>
+      {/* Zona oscura en la punta (acero negro, primer tercio) */}
+      <mesh position={[0, 1.22, 0]} scale={[2.1, 1, 0.18]}>
+        <cylinderGeometry args={[0.006, 0.015, 0.24, 8]} />
+        <meshStandardMaterial metalness={0.98} roughness={0.02} color="#1A1A1A" emissive="#111111" emissiveIntensity={0.05} />
       </mesh>
       {/* Filo brillante */}
-      <mesh position={[0.113, 0.70, 0]}>
-        <boxGeometry args={[0.012, 1.40, 0.012]} />
-        <meshStandardMaterial {...EDGE} emissive="#BBBBBB" emissiveIntensity={0.15} />
+      <mesh position={[0.084, 0.68, 0]}>
+        <boxGeometry args={[0.009, 1.36, 0.007]} />
+        <meshStandardMaterial metalness={1.0} roughness={0.0} color="#FFFFFF" emissive="#DDDDDD" emissiveIntensity={0.22} />
       </mesh>
     </group>
   )
 }
 
-/**
- * Brazo del dedo (recto).
- *
- * Shank: centro (0, -0.22), altura 0.46 → fondo en y = -0.45
- * Anillo: centro y = -0.45 - R(0.128) = -0.578
- *   → borde superior del anillo = -0.578 + 0.128 = -0.450 ← toca exacto el shank
- *
- * Sin rotación en el torus → yace en plano XY, agujero mira hacia la cámara (Z).
- * Así los dedos entran de frente, igual que tijeras reales.
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// Mango plano orgánico — pieza plana que conecta pivote con el anillo
+// ─────────────────────────────────────────────────────────────────────────────
+function HandleStrut({ xOff = 0, zRot = 0 }: { xOff?: number; zRot?: number }) {
+  return (
+    <group position={[xOff, -0.22, 0]} rotation={[0, 0, zRot]}>
+      {/* Pieza central plana */}
+      <mesh scale={[1.0, 1, 0.26]}>
+        <cylinderGeometry args={[0.040, 0.058, 0.44, 7]} />
+        <meshStandardMaterial {...CHROME} emissive="#AAAAAA" emissiveIntensity={0.08} />
+      </mesh>
+      {/* Expansión hacia el anillo */}
+      <mesh position={[0, -0.25, 0]} scale={[1.8, 1, 0.26]}>
+        <cylinderGeometry args={[0.048, 0.040, 0.08, 7]} />
+        <meshStandardMaterial {...CHROME} emissive="#AAAAAA" emissiveIntensity={0.08} />
+      </mesh>
+      {/* Detalle decorativo lateral (tab lateral) */}
+      <mesh position={[0.08, -0.02, 0]} rotation={[0, 0, 0.4]} scale={[0.4, 1, 0.22]}>
+        <cylinderGeometry args={[0.025, 0.020, 0.10, 6]} />
+        <meshStandardMaterial {...CHROME} emissive="#999999" emissiveIntensity={0.06} />
+      </mesh>
+    </group>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Brazo del dedo — anillo con relleno rojo + tang/gancho
+// ─────────────────────────────────────────────────────────────────────────────
 function FingerArm() {
   return (
     <group>
       <Blade />
-      {/* Shank */}
-      <mesh position={[0, -0.22, 0]}>
-        <cylinderGeometry args={[0.021, 0.026, 0.46, 10]} />
-        <meshStandardMaterial {...SHANK} />
+      <HandleStrut />
+
+      {/* Anillo — marco cromo, grande, sin rotación → agujero hacia cámara */}
+      <mesh position={[0, -0.57, 0]}>
+        <torusGeometry args={[0.208, 0.036, 18, 64]} />
+        <meshStandardMaterial {...CHROME} emissive="#BBBBBB" emissiveIntensity={0.12} />
       </mesh>
-      {/* Tope rojo (finger rest) */}
-      <mesh position={[0.042, -0.10, 0]}>
-        <sphereGeometry args={[0.028, 10, 10]} />
-        <meshStandardMaterial {...RED} />
+      {/* Relleno rojo interior */}
+      <mesh position={[0, -0.57, 0]}>
+        <circleGeometry args={[0.170, 56]} />
+        <meshStandardMaterial
+          color="#CC1400"
+          metalness={0.55}
+          roughness={0.30}
+          side={THREE.DoubleSide}
+          emissive="#660000"
+          emissiveIntensity={0.28}
+        />
       </mesh>
-      {/* Anillo del dedo — sin rotación, agujero hacia cámara */}
-      <mesh position={[0, -0.578, 0]}>
-        <torusGeometry args={[0.128, 0.025, 16, 52]} />
-        <meshStandardMaterial {...RED} emissive="#440000" emissiveIntensity={0.15} />
+
+      {/* Tang / gancho curvo en la parte superior del anillo */}
+      <mesh position={[-0.07, -0.345, 0]} rotation={[0, 0, 0.55]}>
+        <torusGeometry args={[0.090, 0.023, 10, 32, Math.PI * 0.68]} />
+        <meshStandardMaterial {...CHROME} emissive="#AAAAAA" emissiveIntensity={0.10} />
       </mesh>
     </group>
   )
 }
 
-/**
- * Brazo del pulgar (ergo offset).
- *
- * Shank: centro (0.038, -0.24), rot z=-0.11, altura 0.48
- *   → fondo aprox. (0.064, -0.479)
- * Anillo: centro (0.09, -0.62)
- *   → borde superior = -0.62 + 0.138 = -0.482 ≈ -0.479 ← conecta con shank
- *
- * Sin rotación → agujero hacia cámara, igual que el brazo del dedo.
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// Brazo del pulgar — ergo offset, anillo ligeramente más grande
+// ─────────────────────────────────────────────────────────────────────────────
 function ThumbArm() {
   return (
     <group>
       <Blade />
-      {/* Shank con offset ergonómico */}
-      <mesh position={[0.038, -0.24, 0]} rotation={[0, 0, -0.11]}>
-        <cylinderGeometry args={[0.019, 0.025, 0.48, 10]} />
-        <meshStandardMaterial {...SHANK} />
+      <HandleStrut xOff={0.030} zRot={-0.09} />
+
+      {/* Anillo — ligeramente mayor, sin rotación */}
+      <mesh position={[0.040, -0.56, 0]}>
+        <torusGeometry args={[0.218, 0.036, 18, 64]} />
+        <meshStandardMaterial {...CHROME} emissive="#BBBBBB" emissiveIntensity={0.12} />
       </mesh>
-      {/* Anillo exterior del pulgar — sin rotación, agujero hacia cámara */}
-      <mesh position={[0.09, -0.62, 0]}>
-        <torusGeometry args={[0.138, 0.025, 16, 52]} />
-        <meshStandardMaterial {...RED} emissive="#440000" emissiveIntensity={0.15} />
-      </mesh>
-      {/* Aro interior 360° swivel */}
-      <mesh position={[0.09, -0.62, 0]}>
-        <torusGeometry args={[0.110, 0.010, 10, 52]} />
+      {/* Relleno rojo interior */}
+      <mesh position={[0.040, -0.56, 0]}>
+        <circleGeometry args={[0.180, 56]} />
         <meshStandardMaterial
-          metalness={1.0}
-          roughness={0.0}
-          color="#EE2200"
-          emissive="#550000"
-          emissiveIntensity={0.4}
+          color="#CC1400"
+          metalness={0.55}
+          roughness={0.30}
+          side={THREE.DoubleSide}
+          emissive="#660000"
+          emissiveIntensity={0.28}
+        />
+      </mesh>
+
+      {/* Pequeña pestaña exterior del anillo del pulgar */}
+      <mesh position={[0.155, -0.42, 0]} rotation={[0, 0, -0.50]}>
+        <cylinderGeometry args={[0.018, 0.018, 0.065, 10]} />
+        <meshStandardMaterial {...CHROME} emissive="#999999" emissiveIntensity={0.06} />
+      </mesh>
+    </group>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pivote — gema roja en montura dorada (igual que la imagen de referencia)
+// ─────────────────────────────────────────────────────────────────────────────
+function Pivot() {
+  return (
+    <group>
+      {/* Disco de base dorada */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.055, 0.055, 0.010, 24]} />
+        <meshStandardMaterial {...GOLD} />
+      </mesh>
+      {/* Aro dorado */}
+      <mesh>
+        <torusGeometry args={[0.052, 0.014, 10, 24]} />
+        <meshStandardMaterial metalness={1.0} roughness={0.0} color="#D4AA50" emissive="#553300" emissiveIntensity={0.18} />
+      </mesh>
+      {/* Gema roja (esfera) */}
+      <mesh position={[0, 0, 0.018]}>
+        <sphereGeometry args={[0.036, 18, 18]} />
+        <meshStandardMaterial
+          color="#CC1000"
+          metalness={0.65}
+          roughness={0.15}
+          emissive="#660000"
+          emissiveIntensity={0.35}
         />
       </mesh>
     </group>
   )
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Componente principal — animación sin cambios
+// ─────────────────────────────────────────────────────────────────────────────
 export default function ScissorsMesh() {
   const groupRef = useRef<THREE.Group>(null)
   const arm1Ref  = useRef<THREE.Group>(null)
@@ -115,7 +180,7 @@ export default function ScissorsMesh() {
     arm1Ref.current.rotation.z =  angle
     arm2Ref.current.rotation.z = -angle
 
-    // Rotación Y suave con scroll
+    // Rotación Y con scroll
     rotYRef.current = THREE.MathUtils.lerp(rotYRef.current, scroll * 0.005, 0.07)
     groupRef.current.rotation.y = rotYRef.current
 
@@ -126,29 +191,16 @@ export default function ScissorsMesh() {
 
   return (
     <group ref={groupRef} scale={1.45}>
-      {/* Brazo delantero — dedo */}
+      {/* Brazo del dedo (frente) */}
       <group ref={arm1Ref} position={[0, 0, 0.06]}>
         <FingerArm />
       </group>
-      {/* Brazo trasero — pulgar ergo */}
+      {/* Brazo del pulgar (atrás, ergo) */}
       <group ref={arm2Ref} position={[0, 0, -0.06]}>
         <ThumbArm />
       </group>
-
-      {/* Pivote dorado */}
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.050, 0.050, 0.14, 16]} />
-        <meshStandardMaterial {...GOLD} emissive="#443300" emissiveIntensity={0.12} />
-      </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.050, 0.012, 8, 16]} />
-        <meshStandardMaterial metalness={1.0} roughness={0.0} color="#D4AA50" emissive="#553300" emissiveIntensity={0.15} />
-      </mesh>
-      {/* Ranura tornillo */}
-      <mesh position={[0, 0, 0.078]}>
-        <boxGeometry args={[0.060, 0.008, 0.005]} />
-        <meshStandardMaterial metalness={0.9} roughness={0.1} color="#A8863A" />
-      </mesh>
+      {/* Pivote central (gema roja) */}
+      <Pivot />
     </group>
   )
 }
