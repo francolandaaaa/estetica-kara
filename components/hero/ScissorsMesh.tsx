@@ -63,11 +63,6 @@ function ScissorsArm({ thumb = false }: { thumb?: boolean }) {
         <cylinderGeometry args={[0.001, BASE_R, BLADE_H, 16]} />
         <meshStandardMaterial {...STEEL} emissive="#BBBBBB" emissiveIntensity={0.07} />
       </mesh>
-      {/* Mirror-polished cutting edge */}
-      <mesh position={[BASE_R * 2.2 * 0.88, BLADE_H / 2, 0]}>
-        <boxGeometry args={[0.006, BLADE_H, 0.005]} />
-        <meshStandardMaterial {...STEEL} emissive="#FFFFFF" emissiveIntensity={0.40} />
-      </mesh>
 
       {/* ── SHOULDER ── flat collar at pivot: hides blade↔handle junction ── */}
       <mesh position={[sx * RING_X * 0.08, -0.025, 0]} scale={[2.6, 1, 0.19]}>
