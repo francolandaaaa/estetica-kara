@@ -64,11 +64,6 @@ function ScissorsArm({ thumb = false }: { thumb?: boolean }) {
         <meshStandardMaterial {...STEEL} emissive="#BBBBBB" emissiveIntensity={0.07} />
       </mesh>
 
-      {/* ── SHOULDER ── flat collar at pivot: hides blade↔handle junction ── */}
-      <mesh position={[sx * RING_X * 0.08, -0.025, 0]} scale={[2.6, 1, 0.19]}>
-        <cylinderGeometry args={[0.034, 0.048, 0.06, 10]} />
-        <meshStandardMaterial {...STEEL} emissive="#AAAAAA" emissiveIntensity={0.06} />
-      </mesh>
 
       {/* ── HANDLE ── tapers from BASE_R (pivot) to thin (ring end) ────────
           Rotation is +STRUT_ROT for finger arm, −STRUT_ROT for thumb arm.
