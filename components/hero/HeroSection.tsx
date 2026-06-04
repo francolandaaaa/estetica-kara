@@ -73,7 +73,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none px-6 text-center">
         <motion.p
           initial={{ opacity: 0, letterSpacing: '0.7em' }}
-          animate={{ opacity: 0.55, letterSpacing: '0.38em' }}
+          animate={{ opacity: 0.85, letterSpacing: '0.38em' }}
           transition={{ duration: 2.4, delay: 0.1 }}
           className="text-xs uppercase mb-6"
           style={{ color: '#C9A84C' }}
@@ -85,10 +85,17 @@ export default function HeroSection() {
           initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1.4, ease: "easeInOut", delay: 0.4 }}
-          className="font-light text-white leading-none mb-3"
+          className="font-light leading-none mb-3"
           style={{
             fontFamily: 'var(--font-cormorant)',
             fontSize: 'clamp(64px, 12vw, 140px)',
+            background: 'linear-gradient(160deg, #FFFFFF 30%, #E8D090 60%, #FFFFFF 85%)',
+            backgroundSize: '200% auto',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            animation: 'shimmer-gold 6s linear infinite',
+            textShadow: 'none',
           }}
         >
           NUDO
@@ -114,7 +121,7 @@ export default function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
           className="mb-10 leading-relaxed"
-          style={{ color: 'rgba(255,255,255,0.38)', fontSize: 'clamp(14px, 1.5vw, 17px)' }}
+          style={{ color: 'rgba(255,255,255,0.60)', fontSize: 'clamp(14px, 1.5vw, 17px)', letterSpacing: '0.04em' }}
         >
           Agenda tu cita y transforma tu estilo
         </motion.p>
@@ -125,14 +132,23 @@ export default function HeroSection() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, ease, delay: 1.2 }}
           className="pointer-events-auto text-xs tracking-[0.3em] uppercase px-10 py-4 transition-all duration-500"
-          style={{ border: '1px solid #C9A84C', color: '#C9A84C' }}
+          style={{
+            border: '1px solid rgba(201,168,76,0.80)',
+            color: '#C9A84C',
+            background: 'linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04))',
+            animation: 'pulse-glow 3.5s ease-in-out infinite',
+          }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#C9A84C'
             e.currentTarget.style.color = '#050505'
+            e.currentTarget.style.boxShadow = '0 0 40px rgba(201,168,76,0.6)'
+            e.currentTarget.style.animation = 'none'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'transparent'
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04))'
             e.currentTarget.style.color = '#C9A84C'
+            e.currentTarget.style.boxShadow = ''
+            e.currentTarget.style.animation = 'pulse-glow 3.5s ease-in-out infinite'
           }}
         >
           Agendar Cita

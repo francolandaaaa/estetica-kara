@@ -21,9 +21,19 @@ html {
 }
 
 body {
-  background-color: #050505;
+  background: radial-gradient(ellipse at 50% -8%, #0F0A04 0%, #050505 55%);
   color: #F5F5F5;
   overflow-x: hidden;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 18px rgba(201,168,76,0.22), 0 0 40px rgba(201,168,76,0.08); }
+  50%       { box-shadow: 0 0 36px rgba(201,168,76,0.48), 0 0 80px rgba(201,168,76,0.20); }
+}
+
+@keyframes shimmer-gold {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
 ::selection {

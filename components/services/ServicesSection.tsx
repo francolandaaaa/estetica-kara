@@ -87,8 +87,14 @@ export default function ServicesSection() {
             Lo que ofrecemos
           </p>
           <h2
-            className="text-5xl md:text-6xl font-light text-white"
-            style={{ fontFamily: 'var(--font-cormorant)' }}
+            className="text-5xl md:text-6xl font-light"
+            style={{
+              fontFamily: 'var(--font-cormorant)',
+              background: 'linear-gradient(135deg, #C9A84C 0%, #F0D890 45%, #C9A84C 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
           >
             Nuestros Servicios
           </h2>
