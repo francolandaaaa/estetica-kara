@@ -87,20 +87,6 @@ function ScissorsArm({ thumb = false }: { thumb?: boolean }) {
         <meshStandardMaterial {...WINE} emissive="#1A0008" emissiveIntensity={0.18} />
       </mesh>
 
-      {/* ── TANG ── finger arm only, curved hook at ring top ─────────────── */}
-      {!thumb && (
-        <mesh
-          position={[
-            sx * RING_X - ringR * 0.50,
-            ringCY + ringR * 0.88,
-            0,
-          ]}
-          rotation={[0, 0, 0.65]}
-        >
-          <torusGeometry args={[ringR * 0.36, 0.018, 8, 24, Math.PI * 0.66]} />
-          <meshStandardMaterial {...STEEL} emissive="#AAAAAA" emissiveIntensity={0.08} />
-        </mesh>
-      )}
 
     </group>
   )
