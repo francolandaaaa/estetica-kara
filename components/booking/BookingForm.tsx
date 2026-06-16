@@ -83,7 +83,7 @@ export default function BookingForm() {
 
   const getFocusStyle = (field: keyof FormData): React.CSSProperties => ({
     ...inputStyle,
-    borderBottomColor: focused === field ? '#C9A84C' : 'rgba(255,255,255,0.14)',
+    borderBottomColor: focused === field ? '#D4688F' : 'rgba(255,255,255,0.14)',
     transition: 'border-color 0.3s',
   })
 
@@ -127,14 +127,14 @@ export default function BookingForm() {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', damping: 14, stiffness: 120 }}
             className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-7"
-            style={{ border: '1px solid #C9A84C' }}
+            style={{ border: '1px solid #D4688F' }}
           >
             <svg
               viewBox="0 0 24 24"
               fill="none"
               strokeWidth="1.5"
               className="w-7 h-7"
-              style={{ stroke: '#C9A84C' }}
+              style={{ stroke: '#D4688F' }}
             >
               <polyline points="20,6 9,17 4,12" />
             </svg>
@@ -285,16 +285,16 @@ export default function BookingForm() {
               type="submit"
               disabled={status === 'loading'}
               className="relative overflow-hidden text-sm tracking-[0.3em] uppercase px-12 py-4 transition-colors duration-500 group"
-              style={{ border: '1px solid #C9A84C', color: '#C9A84C' }}
+              style={{ border: '1px solid #D4688F', color: '#D4688F' }}
               onMouseEnter={e => {
                 const el = e.currentTarget
-                el.style.background = '#C9A84C'
+                el.style.background = '#D4688F'
                 el.style.color = '#050505'
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget
                 el.style.background = 'transparent'
-                el.style.color = '#C9A84C'
+                el.style.color = '#D4688F'
               }}
             >
               {status === 'loading' ? 'Enviando...' : 'Agendar Cita'}

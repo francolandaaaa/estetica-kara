@@ -8,7 +8,7 @@ export default function Footer() {
       className="px-6 md:px-12 lg:px-24 py-16"
       style={{
         background: 'rgba(3,3,3,0.92)',
-        borderTop: '1px solid rgba(201,168,76,0.1)',
+        borderTop: '1px solid rgba(212,104,143,0.1)',
       }}
     >
       <div className="max-w-6xl mx-auto">
@@ -17,9 +17,9 @@ export default function Footer() {
           <div>
             <h3
               className="text-3xl font-light mb-3 tracking-[0.25em]"
-              style={{ fontFamily: 'var(--font-cormorant)', color: '#C9A84C' }}
+              style={{ fontFamily: 'var(--font-cormorant)', color: '#D4688F' }}
             >
-              NUDO
+              Estética Kara
             </h3>
             <p
               className="text-sm tracking-widest uppercase mb-5"
@@ -36,7 +36,7 @@ export default function Footer() {
           <div>
             <h4
               className="text-sm tracking-widest uppercase mb-6"
-              style={{ color: 'rgba(201,168,76,0.65)' }}
+              style={{ color: 'rgba(212,104,143,0.65)' }}
             >
               Contacto
             </h4>
@@ -45,7 +45,7 @@ export default function Footer() {
                 <a
                   href="mailto:franco.landac@gmail.com"
                   className="transition-colors duration-300"
-                  onMouseEnter={e => { e.currentTarget.style.color = '#C9A84C' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
                 >
                   franco.landac@gmail.com
@@ -55,7 +55,7 @@ export default function Footer() {
                 <a
                   href="tel:+525512345678"
                   className="transition-colors duration-300"
-                  onMouseEnter={e => { e.currentTarget.style.color = '#C9A84C' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
                 >
                   +52 55 1234 5678
@@ -69,7 +69,7 @@ export default function Footer() {
           <div>
             <h4
               className="text-sm tracking-widest uppercase mb-6"
-              style={{ color: 'rgba(201,168,76,0.65)' }}
+              style={{ color: 'rgba(212,104,143,0.65)' }}
             >
               Navegación
             </h4>
@@ -83,7 +83,7 @@ export default function Footer() {
                   <a
                     href={link.href}
                     className="transition-colors duration-300"
-                    onMouseEnter={e => { e.currentTarget.style.color = '#C9A84C' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
                   >
                     {link.label}
@@ -100,7 +100,7 @@ export default function Footer() {
           style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
         >
           <p className="text-sm tracking-wider" style={{ color: 'rgba(255,255,255,0.18)' }}>
-            © {year} NUDO Salón de Belleza. Todos los derechos reservados.
+            © {year} Estética Kara. Todos los derechos reservados.
           </p>
           <div className="flex gap-7">
             {['Instagram', 'Facebook', 'TikTok'].map(social => (
@@ -109,7 +109,7 @@ export default function Footer() {
                 href="#"
                 className="text-sm tracking-wider transition-colors duration-300"
                 style={{ color: 'rgba(255,255,255,0.22)' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#C9A84C' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.22)' }}
               >
                 {social}

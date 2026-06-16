@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --gold: #C9A84C;
-  --gold-light: #E8D09A;
+  --gold: #D4688F;
+  --gold-light: #F5B0CC;
   --silver: #C0C0C0;
   --bg: #050505;
 }
 
 @theme inline {
-  --color-gold: #C9A84C;
-  --color-gold-light: #E8D09A;
+  --color-gold: #D4688F;
+  --color-gold-light: #F5B0CC;
   --color-silver: #C0C0C0;
   --color-bg: #050505;
   --font-serif: var(--font-cormorant), Georgia, serif;
@@ -21,14 +21,14 @@ html {
 }
 
 body {
-  background: radial-gradient(ellipse at 50% -8%, #0F0A04 0%, #050505 55%);
+  background: radial-gradient(ellipse at 50% -8%, #0D0509 0%, #050505 55%);
   color: #F5F5F5;
   overflow-x: hidden;
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 18px rgba(201,168,76,0.22), 0 0 40px rgba(201,168,76,0.08); }
-  50%       { box-shadow: 0 0 36px rgba(201,168,76,0.48), 0 0 80px rgba(201,168,76,0.20); }
+  0%, 100% { box-shadow: 0 0 18px rgba(212,104,143,0.22), 0 0 40px rgba(212,104,143,0.08); }
+  50%       { box-shadow: 0 0 36px rgba(212,104,143,0.48), 0 0 80px rgba(212,104,143,0.20); }
 }
 
 @keyframes skeleton-pulse {
@@ -42,7 +42,7 @@ body {
 }
 
 ::selection {
-  background: rgba(201, 168, 76, 0.22);
+  background: rgba(212, 104, 143, 0.22);
   color: #F5F5F5;
 }
 
@@ -55,6 +55,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #C9A84C;
+  background: #D4688F;
   border-radius: 2px;
 }

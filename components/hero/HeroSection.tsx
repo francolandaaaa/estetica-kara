@@ -44,9 +44,9 @@ export default function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="text-xl font-light tracking-[0.3em]"
-          style={{ fontFamily: 'var(--font-cormorant)', color: '#C9A84C' }}
+          style={{ fontFamily: 'var(--font-cormorant)', color: '#D4688F' }}
         >
-          NUDO
+          Estética Kara
         </motion.span>
         <motion.div
           initial={{ opacity: 0 }}
@@ -60,7 +60,7 @@ export default function HeroSection() {
               href={link.href}
               className="transition-colors duration-300 uppercase"
               style={{ color: 'rgba(255,255,255,0.38)' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#C9A84C' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
               onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
             >
               {link.label}
@@ -76,7 +76,7 @@ export default function HeroSection() {
           animate={{ opacity: 0.85, letterSpacing: '0.38em' }}
           transition={{ duration: 2.4, delay: 0.1 }}
           className="text-sm uppercase mb-6"
-          style={{ color: '#C9A84C' }}
+          style={{ color: '#D4688F' }}
         >
           Experiencia Premium
         </motion.p>
@@ -89,7 +89,7 @@ export default function HeroSection() {
           style={{
             fontFamily: 'var(--font-cormorant)',
             fontSize: 'clamp(64px, 12vw, 140px)',
-            background: 'linear-gradient(160deg, #FFFFFF 30%, #E8D090 60%, #FFFFFF 85%)',
+            background: 'linear-gradient(160deg, #FFFFFF 30%, #F5B0CC 60%, #FFFFFF 85%)',
             backgroundSize: '200% auto',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -98,7 +98,7 @@ export default function HeroSection() {
             textShadow: 'none',
           }}
         >
-          NUDO
+          Estética Kara
         </motion.h1>
 
         <motion.p
@@ -109,7 +109,7 @@ export default function HeroSection() {
           style={{
             fontFamily: 'var(--font-cormorant)',
             fontSize: 'clamp(20px, 4vw, 44px)',
-            color: '#C9A84C',
+            color: '#D4688F',
             letterSpacing: '0.1em',
           }}
         >
@@ -133,20 +133,20 @@ export default function HeroSection() {
           transition={{ duration: 0.8, ease, delay: 1.2 }}
           className="pointer-events-auto text-sm tracking-[0.3em] uppercase px-10 py-4 transition-all duration-500"
           style={{
-            border: '1px solid rgba(201,168,76,0.80)',
-            color: '#C9A84C',
-            background: 'linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04))',
+            border: '1px solid rgba(212,104,143,0.80)',
+            color: '#D4688F',
+            background: 'linear-gradient(135deg, rgba(212,104,143,0.14), rgba(212,104,143,0.04))',
             animation: 'pulse-glow 3.5s ease-in-out infinite',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = '#C9A84C'
+            e.currentTarget.style.background = '#D4688F'
             e.currentTarget.style.color = '#050505'
-            e.currentTarget.style.boxShadow = '0 0 40px rgba(201,168,76,0.6)'
+            e.currentTarget.style.boxShadow = '0 0 40px rgba(212,104,143,0.6)'
             e.currentTarget.style.animation = 'none'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04))'
-            e.currentTarget.style.color = '#C9A84C'
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(212,104,143,0.14), rgba(212,104,143,0.04))'
+            e.currentTarget.style.color = '#D4688F'
             e.currentTarget.style.boxShadow = ''
             e.currentTarget.style.animation = 'pulse-glow 3.5s ease-in-out infinite'
           }}
@@ -174,7 +174,7 @@ export default function HeroSection() {
           style={{
             width: '1px',
             height: '52px',
-            background: 'linear-gradient(to bottom, #C9A84C, transparent)',
+            background: 'linear-gradient(to bottom, #D4688F, transparent)',
           }}
         />
       </motion.div>

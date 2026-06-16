@@ -28,7 +28,7 @@ export default function BookingSection() {
         >
           <p
             className="text-sm tracking-[0.35em] uppercase mb-4"
-            style={{ color: '#C9A84C' }}
+            style={{ color: '#D4688F' }}
           >
             Reserva tu lugar
           </p>
@@ -36,7 +36,7 @@ export default function BookingSection() {
             className="text-5xl md:text-6xl font-light"
             style={{
               fontFamily: 'var(--font-cormorant)',
-              background: 'linear-gradient(135deg, #C9A84C 0%, #F0D890 45%, #C9A84C 100%)',
+              background: 'linear-gradient(135deg, #D4688F 0%, #F0D890 45%, #D4688F 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -44,12 +44,12 @@ export default function BookingSection() {
           >
             Agendar Cita
           </h2>
-          <div className="w-14 h-px mx-auto mt-6 mb-6" style={{ background: '#C9A84C' }} />
+          <div className="w-14 h-px mx-auto mt-6 mb-6" style={{ background: '#D4688F' }} />
           <p
             className="text-base max-w-sm mx-auto leading-relaxed"
             style={{ color: 'rgba(255,255,255,0.35)' }}
           >
-            Completa el formulario y nos pondremos en contacto contigo para confirmar tu cita.
+            Selecciona tu día, servicios y horario preferido.
           </p>
         </motion.div>
 

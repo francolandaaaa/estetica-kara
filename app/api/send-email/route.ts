@@ -63,9 +63,9 @@ function buildEmailHtml({
     <html>
     <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
     <body style="margin:0;padding:20px;background:#050505;font-family:'Helvetica Neue',Arial,sans-serif;">
-      <div style="max-width:560px;margin:0 auto;background:#0A0A0A;border-radius:8px;overflow:hidden;border:1px solid rgba(201,168,76,0.2);">
-        <div style="padding:40px;text-align:center;background:linear-gradient(135deg,#0A0A0A 0%,#120F00 100%);border-bottom:1px solid rgba(201,168,76,0.25);">
-          <h1 style="margin:0;font-size:34px;font-weight:300;color:#C9A84C;letter-spacing:12px;">NUDO</h1>
+      <div style="max-width:560px;margin:0 auto;background:#0A0A0A;border-radius:8px;overflow:hidden;border:1px solid rgba(212,104,143,0.2);">
+        <div style="padding:40px;text-align:center;background:linear-gradient(135deg,#0A0A0A 0%,#120F00 100%);border-bottom:1px solid rgba(212,104,143,0.25);">
+          <h1 style="margin:0;font-size:34px;font-weight:300;color:#D4688F;letter-spacing:12px;">NUDO</h1>
           <p style="margin:8px 0 0;color:#6B7280;font-size:11px;letter-spacing:4px;text-transform:uppercase;">Salón de Belleza</p>
         </div>
         <div style="padding:36px 40px;">

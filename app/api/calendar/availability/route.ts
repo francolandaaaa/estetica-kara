@@ -2,30 +2,35 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const SLOT_DURATION_MIN = 60 // Each appointment lasts 60 minutes
+// Salon closes at 18:30 — appointments must end by then
+const CLOSING_MIN = 18 * 60 + 30
 
-function generateSlots(): string[] {
+function generateSlots(durationMin: number): string[] {
   const slots: string[] = []
-  for (let h = 9; h <= 17; h++) {
-    slots.push(`${h.toString().padStart(2, '0')}:00`)
-    slots.push(`${h.toString().padStart(2, '0')}:30`)
+  for (let h = 9; h <= 18; h++) {
+    for (const m of [0, 30]) {
+      const slotMin = h * 60 + m
+      if (slotMin + durationMin <= CLOSING_MIN) {
+        slots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`)
+      }
+    }
   }
-  // 9:00 … 17:30 → 18 slots (last appt 17:30 ends at 18:30)
   return slots
 }
 
 export async function GET(req: NextRequest) {
-  const date = req.nextUrl.searchParams.get('date')
+  const date     = req.nextUrl.searchParams.get('date')
+  const duration = Math.max(30, parseInt(req.nextUrl.searchParams.get('duration') ?? '60'))
+
   if (!date) return NextResponse.json({ error: 'date required' }, { status: 400 })
 
-  const allSlots = generateSlots()
+  const allSlots = generateSlots(duration)
 
   const svcEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
   const svcKey   = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
   const calId    = process.env.GOOGLE_CALENDAR_ID ?? 'primary'
 
   if (!svcEmail || !svcKey) {
-    // Google Calendar not configured yet — all slots available
     return NextResponse.json({ allSlots, busySlots: [] })
   }
 
@@ -56,7 +61,7 @@ export async function GET(req: NextRequest) {
 
     const busySlots = allSlots.filter(slot => {
       const slotStart = new Date(`${date}T${slot}:00-06:00`)
-      const slotEnd   = new Date(slotStart.getTime() + SLOT_DURATION_MIN * 60_000)
+      const slotEnd   = new Date(slotStart.getTime() + duration * 60_000)
       return busy.some(p => {
         const s = new Date(p.start!)
         const e = new Date(p.end!)
