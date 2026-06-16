@@ -67,7 +67,7 @@ function totalMinutos(servicios: ServicioSeleccionado[]): number {
 }
 
 // ─── shared styles ────────────────────────────────────────────────────────────
-const GOLD = '#C9A84C'
+const GOLD = '#D4688F'
 const slideVariants = {
   enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
   center: { x: 0, opacity: 1 },
@@ -92,7 +92,7 @@ function StepIndicator({ current }: { current: Step }) {
           <div className="flex flex-col items-center gap-2">
             <motion.div
               animate={{
-                background: i < idx ? GOLD : i === idx ? 'rgba(201,168,76,0.14)' : 'transparent',
+                background: i < idx ? GOLD : i === idx ? 'rgba(212,104,143,0.14)' : 'transparent',
                 borderColor: i <= idx ? GOLD : 'rgba(255,255,255,0.12)',
               }}
               transition={{ duration: 0.4 }}
@@ -155,7 +155,7 @@ function MonthCalendar({
             fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { if (!isPastMonth) (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.5)') }}
+          onMouseEnter={e => { if (!isPastMonth) (e.currentTarget.style.borderColor = 'rgba(212,104,143,0.5)') }}
           onMouseLeave={e => { (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)') }}
         >
           ←
@@ -178,7 +178,7 @@ function MonthCalendar({
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 0.2s',
           }}
-          onMouseEnter={e => { (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.5)') }}
+          onMouseEnter={e => { (e.currentTarget.style.borderColor = 'rgba(212,104,143,0.5)') }}
           onMouseLeave={e => { (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)') }}
         >
           →
@@ -220,11 +220,11 @@ function MonthCalendar({
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.18s ease',
                 background: isSelected ? GOLD
-                  : isHovered ? 'rgba(201,168,76,0.12)'
+                  : isHovered ? 'rgba(212,104,143,0.12)'
                   : 'transparent',
                 border: isSelected ? 'none'
-                  : isToday ? `1px solid rgba(201,168,76,0.65)`
-                  : isHovered ? '1px solid rgba(201,168,76,0.45)'
+                  : isToday ? `1px solid rgba(212,104,143,0.65)`
+                  : isHovered ? '1px solid rgba(212,104,143,0.45)'
                   : '1px solid transparent',
                 color: isSelected ? '#050505'
                   : cell.disabled ? 'rgba(255,255,255,0.1)'
@@ -343,14 +343,14 @@ function ServicePicker({
                 transition={{ duration: 0.25 }}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  background: 'rgba(201,168,76,0.07)',
-                  border: '1px solid rgba(201,168,76,0.2)',
+                  background: 'rgba(212,104,143,0.07)',
+                  border: '1px solid rgba(212,104,143,0.2)',
                   borderRadius: 8, padding: '12px 16px',
                 }}
               >
                 <div>
                   <p style={{ color: '#F5F5F5', fontSize: 14 }}>{s.nombre}</p>
-                  <p style={{ color: 'rgba(201,168,76,0.75)', fontSize: 12, marginTop: 3 }}>
+                  <p style={{ color: 'rgba(212,104,143,0.75)', fontSize: 12, marginTop: 3 }}>
                     {formatDuracion(s.duracion)}
                   </p>
                 </div>
@@ -381,7 +381,7 @@ function ServicePicker({
           {/* Total */}
           <div style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            borderTop: '1px solid rgba(201,168,76,0.15)', paddingTop: 12,
+            borderTop: '1px solid rgba(212,104,143,0.15)', paddingTop: 12,
           }}>
             <span style={{
               fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
@@ -518,8 +518,8 @@ function ServicePicker({
               onClick={() => setShowForm(true)}
               style={{
                 width: '100%', padding: '12px 0',
-                border: '1px dashed rgba(201,168,76,0.4)', background: 'transparent',
-                color: 'rgba(201,168,76,0.75)', fontSize: 13, letterSpacing: '0.15em',
+                border: '1px dashed rgba(212,104,143,0.4)', background: 'transparent',
+                color: 'rgba(212,104,143,0.75)', fontSize: 13, letterSpacing: '0.15em',
                 textTransform: 'uppercase', cursor: 'pointer',
                 borderRadius: 4, transition: 'all 0.25s',
               }}
@@ -528,8 +528,8 @@ function ServicePicker({
                 e.currentTarget.style.color = GOLD
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)'
-                e.currentTarget.style.color = 'rgba(201,168,76,0.75)'
+                e.currentTarget.style.borderColor = 'rgba(212,104,143,0.4)'
+                e.currentTarget.style.color = 'rgba(212,104,143,0.75)'
               }}
             >
               + Agregar otro servicio
@@ -599,7 +599,7 @@ function TimeSlotPicker({
         </p>
         <span style={{
           fontSize: 12, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em',
-          border: '1px solid rgba(201,168,76,0.2)', borderRadius: 4,
+          border: '1px solid rgba(212,104,143,0.2)', borderRadius: 4,
           padding: '4px 10px', whiteSpace: 'nowrap',
         }}>
           Duración: {formatDuracion(duracionTotal)}
@@ -636,13 +636,13 @@ function TimeSlotPicker({
                     cursor: isBusy ? 'not-allowed' : 'pointer',
                     transition: 'all 0.18s ease',
                     background: isSelected ? GOLD
-                      : isHov ? 'rgba(201,168,76,0.14)'
+                      : isHov ? 'rgba(212,104,143,0.14)'
                       : isBusy ? 'rgba(255,255,255,0.025)'
-                      : 'rgba(201,168,76,0.05)',
+                      : 'rgba(212,104,143,0.05)',
                     border: isSelected ? 'none'
                       : isHov ? `1px solid ${GOLD}`
                       : isBusy ? '1px solid rgba(255,255,255,0.05)'
-                      : '1px solid rgba(201,168,76,0.28)',
+                      : '1px solid rgba(212,104,143,0.28)',
                     color: isSelected ? '#050505'
                       : isHov ? GOLD
                       : isBusy ? 'rgba(255,255,255,0.18)'
@@ -667,7 +667,7 @@ function TimeSlotPicker({
 
           <div className="flex items-center justify-center gap-6 mt-6" style={{ fontSize: 11, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.28)' }}>
             <span className="flex items-center gap-1.5">
-              <span style={{ width: 10, height: 10, borderRadius: 2, display: 'inline-block', border: '1px solid rgba(201,168,76,0.5)', background: 'rgba(201,168,76,0.05)' }} />
+              <span style={{ width: 10, height: 10, borderRadius: 2, display: 'inline-block', border: '1px solid rgba(212,104,143,0.5)', background: 'rgba(212,104,143,0.05)' }} />
               Disponible
             </span>
             <span className="flex items-center gap-1.5">
@@ -729,7 +729,7 @@ function ConfirmForm({
 
       {/* Booking summary */}
       <div style={{
-        background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)',
+        background: 'rgba(212,104,143,0.06)', border: '1px solid rgba(212,104,143,0.2)',
         borderRadius: 10, padding: '20px 24px', marginBottom: 32,
       }}>
         <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: GOLD, marginBottom: 14 }}>
@@ -749,7 +749,7 @@ function ConfirmForm({
             fontFamily: 'var(--font-cormorant)', fontSize: '2rem',
             fontWeight: 300, color: GOLD, letterSpacing: '0.05em', textAlign: 'right',
           }}>
-            {time} <span style={{ fontSize: '0.9rem', color: 'rgba(201,168,76,0.6)' }}>hrs</span>
+            {time} <span style={{ fontSize: '0.9rem', color: 'rgba(212,104,143,0.6)' }}>hrs</span>
           </div>
         </div>
 
@@ -762,7 +762,7 @@ function ConfirmForm({
               borderBottom: i < servicios.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
             }}>
               <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{s.nombre}</span>
-              <span style={{ color: 'rgba(201,168,76,0.65)', fontSize: 12 }}>{formatDuracion(s.duracion)}</span>
+              <span style={{ color: 'rgba(212,104,143,0.65)', fontSize: 12 }}>{formatDuracion(s.duracion)}</span>
             </div>
           ))}
         </div>
@@ -859,14 +859,14 @@ function SuccessView({
 
       <div style={{
         display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 0,
-        background: 'rgba(201,168,76,0.07)', border: '1px solid rgba(201,168,76,0.2)',
+        background: 'rgba(212,104,143,0.07)', border: '1px solid rgba(212,104,143,0.2)',
         borderRadius: 10, padding: '20px 40px', minWidth: 240,
       }}>
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.05em', marginBottom: 4 }}>
           {displayDate(date)}
         </p>
         <p style={{ fontFamily: 'var(--font-cormorant)', fontSize: '2.5rem', fontWeight: 300, color: GOLD, marginBottom: 4 }}>
-          {time} <span style={{ fontSize: '1rem', color: 'rgba(201,168,76,0.55)' }}>hrs</span>
+          {time} <span style={{ fontSize: '1rem', color: 'rgba(212,104,143,0.55)' }}>hrs</span>
         </p>
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.08em' }}>
           {formatDuracion(total)} · {servicios.map(s => s.nombre).join(', ')}
