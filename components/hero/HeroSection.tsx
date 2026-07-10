@@ -1,12 +1,6 @@
 'use client'
 
-import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
-
-const HairCanvas = dynamic(() => import('./HairCanvas'), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0" style={{ background: '#050505' }} />,
-})
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
@@ -19,11 +13,6 @@ const NAV_LINKS = [
 export default function HeroSection() {
   return (
     <section id="inicio" className="relative h-screen overflow-hidden" style={{ background: 'transparent' }}>
-      {/* Hair animation */}
-      <div className="absolute inset-0">
-        <HairCanvas />
-      </div>
-
       {/* Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"

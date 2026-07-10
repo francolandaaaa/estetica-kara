@@ -5,7 +5,7 @@ export default function MapSection() {
     <section
       id="ubicacion"
       className="py-24 px-6 md:px-12 lg:px-24"
-      style={{ background: 'rgba(5,5,5,0.90)' }}
+      style={{ background: 'rgba(5,5,5,0.72)' }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Heading */}

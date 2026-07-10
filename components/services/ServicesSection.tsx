@@ -75,7 +75,7 @@ export default function ServicesSection() {
       id="servicios"
       ref={sectionRef}
       className="py-28 px-6 md:px-12 lg:px-24"
-      style={{ background: 'rgba(8,8,8,0.90)' }}
+      style={{ background: 'rgba(8,8,8,0.72)' }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Heading */}

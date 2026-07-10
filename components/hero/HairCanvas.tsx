@@ -163,8 +163,8 @@ export default function HairCanvas() {
     // ── Viewport resize ───────────────────────────────────────────────────
     function resize() {
       const dpr = Math.min(window.devicePixelRatio, 2)
-      canvas!.width  = (canvas!.offsetWidth  || window.innerWidth)  * dpr
-      canvas!.height = (canvas!.offsetHeight || window.innerHeight) * dpr
+      canvas!.width  = window.innerWidth  * dpr
+      canvas!.height = window.innerHeight * dpr
       gl!.viewport(0, 0, canvas!.width, canvas!.height)
     }
     resize()
@@ -242,12 +242,11 @@ export default function HairCanvas() {
     <canvas
       ref={canvasRef}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
+        width: '100vw',
+        height: '100vh',
         display: 'block',
         pointerEvents: 'none',
       }}
