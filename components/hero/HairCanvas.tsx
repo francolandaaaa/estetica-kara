@@ -88,7 +88,7 @@ void main() {
        brown = mix(brown, c4, smoothstep(0.75, 1.00, lum));
 
   // Slightly reduce overall brightness so lettering stays legible
-  brown *= 0.78;
+  brown *= 0.95;
 
   gl_FragColor = vec4(brown, 1.0);
 }
