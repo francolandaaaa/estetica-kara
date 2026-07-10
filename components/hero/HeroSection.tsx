@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 
-const ThreeCanvas = dynamic(() => import('./ThreeCanvas'), {
+const HairCanvas = dynamic(() => import('./HairCanvas'), {
   ssr: false,
   loading: () => <div className="absolute inset-0" style={{ background: '#050505' }} />,
 })
@@ -19,9 +19,9 @@ const NAV_LINKS = [
 export default function HeroSection() {
   return (
     <section id="inicio" className="relative h-screen overflow-hidden" style={{ background: 'transparent' }}>
-      {/* 3D Canvas */}
+      {/* Hair animation */}
       <div className="absolute inset-0">
-        <ThreeCanvas />
+        <HairCanvas />
       </div>
 
       {/* Vignette */}
