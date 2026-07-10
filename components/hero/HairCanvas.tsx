@@ -52,11 +52,11 @@ void main() {
   drift -= repDir * repFalloff * u_mstr * 0.022;
 
   // ── Ambient breath – always alive ─────────────────────────────────────
-  drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.0024;
-  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)          * 0.0011;
-  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23)  * 0.0016;
-  drift.y += cos(suv.x * 3.0  + t * 0.37)                * 0.0008;
-  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)          * 0.0006;
+  drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.010;
+  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)          * 0.005;
+  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23)  * 0.007;
+  drift.y += cos(suv.x * 3.0  + t * 0.37)                * 0.004;
+  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)          * 0.003;
 
   // ── Scroll energy ─────────────────────────────────────────────────────
   float sA = u_scroll * 0.025;
@@ -163,8 +163,8 @@ export default function HairCanvas() {
     // ── Viewport resize ───────────────────────────────────────────────────
     function resize() {
       const dpr = Math.min(window.devicePixelRatio, 2)
-      canvas!.width  = window.innerWidth  * dpr
-      canvas!.height = window.innerHeight * dpr
+      canvas!.width  = (canvas!.offsetWidth  || window.innerWidth)  * dpr
+      canvas!.height = (canvas!.offsetHeight || window.innerHeight) * dpr
       gl!.viewport(0, 0, canvas!.width, canvas!.height)
     }
     resize()
@@ -242,11 +242,11 @@ export default function HairCanvas() {
     <canvas
       ref={canvasRef}
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top: 0,
         left: 0,
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
         zIndex: 0,
         display: 'block',
         pointerEvents: 'none',
