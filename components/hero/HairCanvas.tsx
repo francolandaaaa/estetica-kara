@@ -18,22 +18,19 @@ precision highp float;
 
 uniform sampler2D u_tex;
 uniform float u_time;
-uniform float u_scroll;    // 0..1 – energy from scroll velocity
-uniform vec2  u_mouse;     // screen UV (x: 0-1 left→right, y: 0-1 bottom→top)
-uniform vec2  u_mvel;      // normalised mouse direction
-uniform float u_mstr;      // 0..1 – accumulated mouse energy
-uniform float u_imgAsp;    // image width / height
-uniform float u_canvAsp;   // canvas width / height
+uniform float u_scroll;    // 0..1  scroll energy
+uniform vec2  u_mouse;     // screen UV (x: 0→1, y: 0→1 bottom→top)
+uniform float u_mstr;      // 0..1  mouse presence strength
+uniform float u_imgAsp;    // image w/h
+uniform float u_canvAsp;   // canvas w/h
 
-varying vec2 v_uv;         // screen UV
+varying vec2 v_uv;
 
-// Object-fit: cover – maps screen UV to image UV
+// Object-fit: cover
 vec2 coverUV(vec2 suv) {
   if (u_canvAsp > u_imgAsp) {
-    // canvas wider than image → fill width, crop height
     return vec2(suv.x, (suv.y - 0.5) * (u_imgAsp / u_canvAsp) + 0.5);
   } else {
-    // canvas taller than image → fill height, crop width
     return vec2((suv.x - 0.5) * (u_canvAsp / u_imgAsp) + 0.5, suv.y);
   }
 }
@@ -43,31 +40,57 @@ void main() {
   float t  = u_time;
   vec2 drift = vec2(0.0);
 
-  // ── Mouse air current ─────────────────────────────────────────────────
-  // Directional push in the direction of mouse movement; soft gaussian field
-  vec2 diff = suv - u_mouse;
-  diff.x *= u_canvAsp;                        // isotropic screen-space distance
-  float falloff = exp(-dot(diff, diff) * 6.0);
-  drift += u_mvel * falloff * u_mstr * 0.032;
+  // ── Radial repulsion (same-charge magnet) ─────────────────────────────
+  // diff/lenA gives a unit repulsion vector that is isotropic in screen-
+  // pixel space (not in UV space), so the "opening" looks circular.
+  vec2 diff  = suv - u_mouse;
+  vec2 diffA = vec2(diff.x * u_canvAsp, diff.y);   // aspect-corrected
+  float lenA = length(diffA);
+  float d2   = dot(diffA, diffA);
+  float repFalloff = exp(-d2 * 10.0);               // focused zone ~300 px
+  vec2 repDir = lenA > 0.001 ? diff / lenA : vec2(0.0);
+  drift += repDir * repFalloff * u_mstr * 0.022;
 
-  // ── Ambient breath – always alive, very subtle ────────────────────────
-  // Multiple waves at different frequencies and phases for organic feel
-  drift.x += sin(suv.y * 2.8  + t * 0.47)            * 0.0024;
-  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)      * 0.0011;
-  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23) * 0.0016;
-  drift.y += cos(suv.x * 3.0  + t * 0.37)            * 0.0008;
-  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)      * 0.0006;
+  // ── Ambient breath – always alive ─────────────────────────────────────
+  drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.0024;
+  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)          * 0.0011;
+  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23)  * 0.0016;
+  drift.y += cos(suv.x * 3.0  + t * 0.37)                * 0.0008;
+  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)          * 0.0006;
 
-  // ── Scroll energy – amplitude grows with scroll speed ─────────────────
+  // ── Scroll energy ─────────────────────────────────────────────────────
   float sA = u_scroll * 0.025;
-  drift.x += sin(suv.y * 6.8  + t * 2.2)              * sA;
-  drift.x += sin(suv.y * 4.1  - t * 1.6 + 2.1)        * sA * 0.55;
-  drift.y += cos(suv.y * 5.2  + t * 1.9)              * sA * 0.28;
+  drift.x += sin(suv.y * 6.8  + t * 2.2)                 * sA;
+  drift.x += sin(suv.y * 4.1  - t * 1.6 + 2.1)           * sA * 0.55;
+  drift.y += cos(suv.y * 5.2  + t * 1.9)                 * sA * 0.28;
 
-  // ── Sample image with cover-mode UV ──────────────────────────────────
+  // ── Sample ────────────────────────────────────────────────────────────
   vec2 imageUV = coverUV(suv + drift);
   imageUV = clamp(imageUV, 0.001, 0.999);
-  gl_FragColor = texture2D(u_tex, imageUV);
+  vec4 raw = texture2D(u_tex, imageUV);
+
+  // ── Castaño brown colorisation ────────────────────────────────────────
+  // Convert to luminance, then map through a 5-stop brown ramp.
+  // Preserves all strand-level contrast from the original image –
+  // darker strands → deep brown, lighter strands → honey highlights.
+  float lum = dot(raw.rgb, vec3(0.2126, 0.7152, 0.0722));
+
+  // 5-stop ramp: near-black root → dark brown → castaño → warm → honey
+  vec3 c0 = vec3(0.07, 0.03, 0.01);   // deep shadow / root
+  vec3 c1 = vec3(0.22, 0.10, 0.04);   // dark castaño
+  vec3 c2 = vec3(0.40, 0.20, 0.08);   // base castaño
+  vec3 c3 = vec3(0.62, 0.38, 0.16);   // warm brown
+  vec3 c4 = vec3(0.82, 0.64, 0.36);   // honey / light strand highlight
+
+  vec3 brown = mix(c0, c1, smoothstep(0.00, 0.25, lum));
+       brown = mix(brown, c2, smoothstep(0.25, 0.50, lum));
+       brown = mix(brown, c3, smoothstep(0.50, 0.75, lum));
+       brown = mix(brown, c4, smoothstep(0.75, 1.00, lum));
+
+  // Slightly reduce overall brightness so lettering stays legible
+  brown *= 0.78;
+
+  gl_FragColor = vec4(brown, 1.0);
 }
 `
 
@@ -113,7 +136,6 @@ export default function HairCanvas() {
     const uTime    = gl.getUniformLocation(prog, 'u_time')
     const uScroll  = gl.getUniformLocation(prog, 'u_scroll')
     const uMouse   = gl.getUniformLocation(prog, 'u_mouse')
-    const uMvel    = gl.getUniformLocation(prog, 'u_mvel')
     const uMstr    = gl.getUniformLocation(prog, 'u_mstr')
     const uImgAsp  = gl.getUniformLocation(prog, 'u_imgAsp')
     const uCanvAsp = gl.getUniformLocation(prog, 'u_canvAsp')
@@ -148,13 +170,12 @@ export default function HairCanvas() {
     resize()
     window.addEventListener('resize', resize)
 
-    // ── Interaction state (no allocations per frame) ──────────────────────
+    // ── Interaction state ─────────────────────────────────────────────────
     let scrollEnergy = 0
     let lastScrollY  = window.scrollY
-    let mouseX = 0.5, mouseY = 0.5
-    let mouseVX = 0,  mouseVY = 0    // normalised direction
+    let mouseX = -2, mouseY = 0.5   // start off-screen so no initial repulsion
     let mouseStr = 0
-    let pmouseX = 0.5, pmouseY = 0.5
+    let mousePresent = false
 
     const onScroll = () => {
       const delta = Math.abs(window.scrollY - lastScrollY)
@@ -163,24 +184,17 @@ export default function HairCanvas() {
     }
 
     const onMouse = (e: MouseEvent) => {
-      const nx   = e.clientX / window.innerWidth
-      const ny   = 1 - e.clientY / window.innerHeight // flip Y for WebGL
-      const dvx  = nx - pmouseX
-      const dvy  = ny - pmouseY
-      const spd  = Math.sqrt(dvx * dvx + dvy * dvy)
-      if (spd > 0.0001) {
-        mouseVX = dvx / spd  // normalised direction
-        mouseVY = dvy / spd
-      }
-      mouseStr  = Math.min(1, mouseStr + spd * 30)
-      pmouseX   = mouseX
-      pmouseY   = mouseY
-      mouseX    = nx
-      mouseY    = ny
+      mouseX       = e.clientX / window.innerWidth
+      mouseY       = 1 - e.clientY / window.innerHeight
+      mousePresent = true
     }
+
+    // Fade out when cursor leaves the browser window
+    const onLeave = () => { mousePresent = false }
 
     window.addEventListener('scroll',    onScroll, { passive: true })
     window.addEventListener('mousemove', onMouse,  { passive: true })
+    document.addEventListener('mouseleave', onLeave)
 
     // ── Render loop ───────────────────────────────────────────────────────
     const t0 = performance.now()
@@ -193,16 +207,16 @@ export default function HairCanvas() {
       const canvAsp = canvas!.width / canvas!.height
       const imgAsp  = imgW / imgH
 
-      // Smooth decay
       scrollEnergy *= 0.978
-      mouseStr     *= 0.962
-      mouseVX      *= 0.910
-      mouseVY      *= 0.910
+
+      // Mouse strength: fade in while present, fade out when cursor leaves
+      mouseStr = mousePresent
+        ? Math.min(1, mouseStr + 0.05)   // ~20 frames to full strength
+        : Math.max(0, mouseStr - 0.012)  // ~80 frames (~1.3 s) to zero
 
       gl!.uniform1f(uTime,    t)
       gl!.uniform1f(uScroll,  scrollEnergy)
       gl!.uniform2f(uMouse,   mouseX, mouseY)
-      gl!.uniform2f(uMvel,    mouseVX, mouseVY)
       gl!.uniform1f(uMstr,    mouseStr)
       gl!.uniform1f(uImgAsp,  imgAsp)
       gl!.uniform1f(uCanvAsp, canvAsp)
@@ -217,6 +231,7 @@ export default function HairCanvas() {
       window.removeEventListener('resize',    resize)
       window.removeEventListener('scroll',    onScroll)
       window.removeEventListener('mousemove', onMouse)
+      document.removeEventListener('mouseleave', onLeave)
       gl.deleteProgram(prog)
       gl.deleteTexture(tex)
       gl.deleteBuffer(vbuf)
