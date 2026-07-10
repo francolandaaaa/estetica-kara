@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --gold: #D4688F;
-  --gold-light: #F5B0CC;
+  --gold: #E8BAD0;
+  --gold-light: #F5D0E8;
   --silver: #C0C0C0;
   --bg: #050505;
 }
 
 @theme inline {
-  --color-gold: #D4688F;
-  --color-gold-light: #F5B0CC;
+  --color-gold: #E8BAD0;
+  --color-gold-light: #F5D0E8;
   --color-silver: #C0C0C0;
   --color-bg: #050505;
   --font-serif: var(--font-cormorant), Georgia, serif;
@@ -27,8 +27,8 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 18px rgba(212,104,143,0.22), 0 0 40px rgba(212,104,143,0.08); }
-  50%       { box-shadow: 0 0 36px rgba(212,104,143,0.48), 0 0 80px rgba(212,104,143,0.20); }
+  0%, 100% { box-shadow: 0 0 18px rgba(232,186,208,0.22), 0 0 40px rgba(232,186,208,0.08); }
+  50%       { box-shadow: 0 0 36px rgba(232,186,208,0.48), 0 0 80px rgba(232,186,208,0.20); }
 }
 
 @keyframes skeleton-pulse {
@@ -55,6 +55,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4688F;
+  background: #E8BAD0;
   border-radius: 2px;
 }

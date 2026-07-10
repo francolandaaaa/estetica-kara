@@ -22,13 +22,13 @@ export default function BookingSection() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.05 }}
           transition={{ duration: 0.85 }}
           className="mb-16 text-center"
         >
           <p
             className="text-sm tracking-[0.35em] uppercase mb-4"
-            style={{ color: '#D4688F' }}
+            style={{ color: '#E8BAD0' }}
           >
             Reserva tu lugar
           </p>
@@ -36,7 +36,7 @@ export default function BookingSection() {
             className="text-5xl md:text-6xl font-light"
             style={{
               fontFamily: 'var(--font-cormorant)',
-              background: 'linear-gradient(135deg, #D4688F 0%, #F0D890 45%, #D4688F 100%)',
+              background: 'linear-gradient(135deg, #E8BAD0 0%, #F5D0E8 45%, #E8BAD0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -44,7 +44,7 @@ export default function BookingSection() {
           >
             Agendar Cita
           </h2>
-          <div className="w-14 h-px mx-auto mt-6 mb-6" style={{ background: '#D4688F' }} />
+          <div className="w-14 h-px mx-auto mt-6 mb-6" style={{ background: '#E8BAD0' }} />
           <p
             className="text-base max-w-sm mx-auto leading-relaxed"
             style={{ color: 'rgba(255,255,255,0.35)' }}
@@ -57,7 +57,7 @@ export default function BookingSection() {
         <motion.div
           initial={{ opacity: 0, y: 44 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.05 }}
           transition={{ duration: 0.9, delay: 0.15 }}
           className="p-8 md:p-12"
           style={glass}

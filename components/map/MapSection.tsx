@@ -12,7 +12,7 @@ export default function MapSection() {
         <div className="mb-14 text-center">
           <p
             className="text-sm tracking-[0.35em] uppercase mb-4"
-            style={{ color: '#D4688F' }}
+            style={{ color: '#E8BAD0' }}
           >
             Encuéntranos
           </p>
@@ -20,7 +20,7 @@ export default function MapSection() {
             className="text-5xl md:text-6xl font-light"
             style={{
               fontFamily: 'var(--font-cormorant)',
-              background: 'linear-gradient(135deg, #D4688F 0%, #F5B0CC 45%, #D4688F 100%)',
+              background: 'linear-gradient(135deg, #E8BAD0 0%, #F5D0E8 45%, #E8BAD0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -28,7 +28,7 @@ export default function MapSection() {
           >
             Nuestra Ubicación
           </h2>
-          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#D4688F' }} />
+          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#E8BAD0' }} />
         </div>
 
         {/* Map wrapper */}
@@ -37,7 +37,7 @@ export default function MapSection() {
             position: 'relative',
             width: '100%',
             height: '460px',
-            border: '1px solid rgba(212,104,143,0.18)',
+            border: '1px solid rgba(232,186,208,0.18)',
             overflow: 'hidden',
           }}
         >
@@ -67,7 +67,7 @@ export default function MapSection() {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                background: '#D4688F',
+                background: '#E8BAD0',
                 flexShrink: 0,
               }}
             />
@@ -80,9 +80,9 @@ export default function MapSection() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm tracking-[0.2em] uppercase transition-colors duration-300"
-            style={{ color: 'rgba(212,104,143,0.7)' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#D4688F' }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(212,104,143,0.7)' }}
+            style={{ color: 'rgba(232,186,208,0.7)' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#E8BAD0' }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(232,186,208,0.7)' }}
           >
             Abrir en Google Maps ↗
           </a>

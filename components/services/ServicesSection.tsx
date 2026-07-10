@@ -13,7 +13,7 @@ const SERVICES = [
       'Cortes precisos y personalizados adaptados a la forma de tu rostro y a tu estilo de vida.',
     tags: 'Cabello corto · Medio · Largo',
     image: '/gallery/corte-1.jpg',
-    accent: 'rgba(212,104,143,0.12)',
+    accent: 'rgba(232,186,208,0.12)',
   },
   {
     number: '02',
@@ -82,7 +82,7 @@ export default function ServicesSection() {
         <div ref={headRef} className="mb-20 text-center">
           <p
             className="text-sm tracking-[0.35em] uppercase mb-4"
-            style={{ color: '#D4688F' }}
+            style={{ color: '#E8BAD0' }}
           >
             Lo que ofrecemos
           </p>
@@ -90,7 +90,7 @@ export default function ServicesSection() {
             className="text-5xl md:text-6xl font-light"
             style={{
               fontFamily: 'var(--font-cormorant)',
-              background: 'linear-gradient(135deg, #D4688F 0%, #F5B0CC 45%, #D4688F 100%)',
+              background: 'linear-gradient(135deg, #E8BAD0 0%, #F5D0E8 45%, #E8BAD0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -98,7 +98,7 @@ export default function ServicesSection() {
           >
             Nuestros Servicios
           </h2>
-          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#D4688F' }} />
+          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#E8BAD0' }} />
         </div>
 
         {/* Flip Cards Grid */}
@@ -148,7 +148,7 @@ export default function ServicesSection() {
                       fontSize: '3rem',
                       fontWeight: 300,
                       lineHeight: 1,
-                      color: 'rgba(212,104,143,0.22)',
+                      color: 'rgba(232,186,208,0.22)',
                     }}
                   >
                     {svc.number}
@@ -172,7 +172,7 @@ export default function ServicesSection() {
                     style={{
                       width: '40px',
                       height: '1px',
-                      background: 'rgba(212,104,143,0.55)',
+                      background: 'rgba(232,186,208,0.55)',
                       margin: '0.85rem 0',
                     }}
                   />
@@ -181,7 +181,7 @@ export default function ServicesSection() {
                     style={{
                       fontSize: '14px',
                       letterSpacing: '0.14em',
-                      color: 'rgba(212,104,143,0.6)',
+                      color: 'rgba(232,186,208,0.6)',
                       textAlign: 'center',
                     }}
                   >
@@ -211,7 +211,7 @@ export default function ServicesSection() {
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg)',
                     overflow: 'hidden',
-                    border: '1px solid rgba(212,104,143,0.25)',
+                    border: '1px solid rgba(232,186,208,0.25)',
                   }}
                 >
                   {/* Service image */}
@@ -275,7 +275,7 @@ export default function ServicesSection() {
                         marginTop: '1rem',
                         fontSize: '12px',
                         letterSpacing: '0.18em',
-                        color: 'rgba(212,104,143,0.7)',
+                        color: 'rgba(232,186,208,0.7)',
                         textTransform: 'uppercase',
                       }}
                     >

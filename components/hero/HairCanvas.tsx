@@ -49,7 +49,7 @@ void main() {
   float d2   = dot(diffA, diffA);
   float repFalloff = exp(-d2 * 10.0);               // focused zone ~300 px
   vec2 repDir = lenA > 0.001 ? diff / lenA : vec2(0.0);
-  drift += repDir * repFalloff * u_mstr * 0.022;
+  drift -= repDir * repFalloff * u_mstr * 0.022;
 
   // ── Ambient breath – always alive ─────────────────────────────────────
   drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.0024;

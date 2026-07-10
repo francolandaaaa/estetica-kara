@@ -7,9 +7,9 @@ import { galleryImages, type GalleryImage } from './galleryData'
 const CATEGORIES = ['Todos', 'Corte', 'Tinte', 'Peinado', 'Tratamiento']
 
 const PLACEHOLDERS = [
-  'linear-gradient(135deg, rgba(212,104,143,0.15) 0%, rgba(5,5,5,1) 100%)',
+  'linear-gradient(135deg, rgba(232,186,208,0.15) 0%, rgba(5,5,5,1) 100%)',
   'linear-gradient(135deg, rgba(192,192,192,0.12) 0%, rgba(5,5,5,1) 100%)',
-  'linear-gradient(135deg, rgba(212,104,143,0.08) 0%, rgba(180,60,90,0.25) 100%)',
+  'linear-gradient(135deg, rgba(232,186,208,0.08) 0%, rgba(180,60,90,0.25) 100%)',
   'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(5,5,5,1) 100%)',
 ]
 
@@ -36,7 +36,7 @@ function GalleryCard({ image }: { image: GalleryImage }) {
           <div className="absolute inset-0 flex items-center justify-center">
             <span
               className="text-4xl font-light"
-              style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(212,104,143,0.3)' }}
+              style={{ fontFamily: 'var(--font-cormorant)', color: 'rgba(232,186,208,0.3)' }}
             >
               {image.category}
             </span>
@@ -58,7 +58,7 @@ function GalleryCard({ image }: { image: GalleryImage }) {
       >
         <span
           className="text-sm tracking-widest uppercase mb-1"
-          style={{ color: '#D4688F' }}
+          style={{ color: '#E8BAD0' }}
         >
           {image.category}
         </span>
@@ -87,7 +87,7 @@ export default function GallerySection() {
         >
           <p
             className="text-sm tracking-[0.35em] uppercase mb-4"
-            style={{ color: '#D4688F' }}
+            style={{ color: '#E8BAD0' }}
           >
             Nuestro trabajo
           </p>
@@ -95,7 +95,7 @@ export default function GallerySection() {
             className="text-5xl md:text-6xl font-light"
             style={{
               fontFamily: 'var(--font-cormorant)',
-              background: 'linear-gradient(135deg, #D4688F 0%, #F5B0CC 45%, #D4688F 100%)',
+              background: 'linear-gradient(135deg, #E8BAD0 0%, #F5D0E8 45%, #E8BAD0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -103,7 +103,7 @@ export default function GallerySection() {
           >
             Galería
           </h2>
-          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#D4688F' }} />
+          <div className="w-14 h-px mx-auto mt-6" style={{ background: '#E8BAD0' }} />
         </motion.div>
 
         {/* Filter */}
@@ -115,7 +115,7 @@ export default function GallerySection() {
               className="px-6 py-2 text-sm tracking-widest uppercase transition-all duration-350"
               style={
                 active === cat
-                  ? { background: '#D4688F', color: '#050505' }
+                  ? { background: '#E8BAD0', color: '#050505' }
                   : {
                       background: 'transparent',
                       color: 'rgba(255,255,255,0.35)',
@@ -124,8 +124,8 @@ export default function GallerySection() {
               }
               onMouseEnter={e => {
                 if (active !== cat) {
-                  e.currentTarget.style.color = '#D4688F'
-                  e.currentTarget.style.borderColor = 'rgba(212,104,143,0.35)'
+                  e.currentTarget.style.color = '#E8BAD0'
+                  e.currentTarget.style.borderColor = 'rgba(232,186,208,0.35)'
                 }
               }}
               onMouseLeave={e => {
