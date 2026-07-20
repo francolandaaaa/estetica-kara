@@ -1,10 +1,8 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Cormorant_Garamond } from 'next/font/google'
-import dynamic from 'next/dynamic'
+import HairCanvasClient from '@/components/hero/HairCanvasClient'
 import './globals.css'
-
-const HairCanvas = dynamic(() => import('@/components/hero/HairCanvas'), { ssr: false })
 
 const geist = Geist({
   subsets: ['latin'],
@@ -29,7 +27,7 @@ export default function RootLayout({
     <html lang="es" className={`${geist.variable} ${cormorant.variable}`}>
       <body className="antialiased" style={{ background: '#050505', color: '#F5F5F5' }}>
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-          <HairCanvas />
+          <HairCanvasClient />
         </div>
         {children}
       </body>
