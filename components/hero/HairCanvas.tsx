@@ -52,17 +52,22 @@ void main() {
   drift -= repDir * repFalloff * u_mstr * 0.022;
 
   // ── Ambient breath – always alive ─────────────────────────────────────
-  drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.010;
-  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)          * 0.005;
-  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23)  * 0.007;
-  drift.y += cos(suv.x * 3.0  + t * 0.37)                * 0.004;
-  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)          * 0.003;
+  drift.x += sin(suv.y * 2.8  + t * 0.47)                * 0.028;
+  drift.x += sin(suv.y * 5.3  - t * 0.32 + 1.9)          * 0.016;
+  drift.x += sin(suv.y * 1.5  + suv.x * 0.9 + t * 0.23)  * 0.022;
+  drift.y += cos(suv.x * 3.0  + t * 0.37)                * 0.013;
+  drift.y += cos(suv.y * 2.2  + t * 0.28 + 1.1)          * 0.010;
+  // extra low-freq sway for organic feel at rest
+  drift.x += sin(suv.y * 1.1  + t * 0.18 + 3.0)          * 0.018;
+  drift.y += sin(suv.x * 1.8  + t * 0.22 + 1.4)          * 0.009;
 
   // ── Scroll energy ─────────────────────────────────────────────────────
-  float sA = u_scroll * 0.025;
+  float sA = u_scroll * 0.095;
   drift.x += sin(suv.y * 6.8  + t * 2.2)                 * sA;
-  drift.x += sin(suv.y * 4.1  - t * 1.6 + 2.1)           * sA * 0.55;
-  drift.y += cos(suv.y * 5.2  + t * 1.9)                 * sA * 0.28;
+  drift.x += sin(suv.y * 4.1  - t * 1.6 + 2.1)           * sA * 0.70;
+  drift.x += sin(suv.y * 9.5  + t * 3.1 + 0.8)           * sA * 0.40;
+  drift.y += cos(suv.y * 5.2  + t * 1.9)                 * sA * 0.50;
+  drift.y += cos(suv.x * 3.7  - t * 2.4 + 1.7)           * sA * 0.35;
 
   // ── Sample ────────────────────────────────────────────────────────────
   vec2 imageUV = coverUV(suv + drift);
@@ -76,19 +81,19 @@ void main() {
   float lum = dot(raw.rgb, vec3(0.2126, 0.7152, 0.0722));
 
   // 5-stop ramp: near-black root → dark brown → castaño → warm → honey
-  vec3 c0 = vec3(0.07, 0.03, 0.01);   // deep shadow / root
-  vec3 c1 = vec3(0.22, 0.10, 0.04);   // dark castaño
-  vec3 c2 = vec3(0.40, 0.20, 0.08);   // base castaño
-  vec3 c3 = vec3(0.62, 0.38, 0.16);   // warm brown
-  vec3 c4 = vec3(0.82, 0.64, 0.36);   // honey / light strand highlight
+  vec3 c0 = vec3(0.04, 0.015, 0.005); // deep shadow / root
+  vec3 c1 = vec3(0.13, 0.055, 0.018); // dark castaño
+  vec3 c2 = vec3(0.24, 0.110, 0.038); // base castaño
+  vec3 c3 = vec3(0.38, 0.210, 0.075); // warm brown
+  vec3 c4 = vec3(0.52, 0.360, 0.150); // honey / light strand highlight
 
   vec3 brown = mix(c0, c1, smoothstep(0.00, 0.25, lum));
        brown = mix(brown, c2, smoothstep(0.25, 0.50, lum));
        brown = mix(brown, c3, smoothstep(0.50, 0.75, lum));
        brown = mix(brown, c4, smoothstep(0.75, 1.00, lum));
 
-  // Slightly reduce overall brightness so lettering stays legible
-  brown *= 0.95;
+  // Darken overall so text/buttons stay legible
+  brown *= 0.68;
 
   gl_FragColor = vec4(brown, 1.0);
 }
@@ -179,7 +184,7 @@ export default function HairCanvas() {
 
     const onScroll = () => {
       const delta = Math.abs(window.scrollY - lastScrollY)
-      scrollEnergy = Math.min(1, scrollEnergy + delta * 0.008)
+      scrollEnergy = Math.min(1, scrollEnergy + delta * 0.018)
       lastScrollY  = window.scrollY
     }
 
