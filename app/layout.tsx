@@ -16,7 +16,7 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'NUDO Salón de Belleza',
+  title: 'Estética Kara',
   description: 'Experiencia de belleza premium. Agenda tu cita y transforma tu estilo.',
 }
 
