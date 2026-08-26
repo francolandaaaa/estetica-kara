@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 
-const FPS = 24  // assumed video frame rate
-
 export default function VideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
@@ -12,10 +10,21 @@ export default function VideoBackground() {
     if (!video) return
 
     let raf: number
-    let playing = false
     let introActive = true
-    let lastScrollY = window.scrollY
-    let burstEnd = 0  // video.currentTime target to play until
+    let introEndTime = 0
+    let playing = false
+    let smoothScrollY = window.scrollY
+    let lastSeekAt = 0
+
+    const scrollMax = () =>
+      Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
+
+    // scroll 0% → introEndTime, scroll 100% → video end
+    const getTarget = (sy: number) => {
+      if (!video.duration) return introEndTime
+      const progress = Math.min(Math.max(sy / scrollMax(), 0), 1)
+      return introEndTime + progress * (video.duration - introEndTime)
+    }
 
     // ── Intro: 4s autoplay ────────────────────────────────────────────────
     const startIntro = () => {
@@ -31,58 +40,56 @@ export default function VideoBackground() {
       introActive = false
       video.pause()
       playing = false
-      burstEnd = video.currentTime  // scroll continues from this exact frame
+      introEndTime = video.currentTime   // freeze here — this becomes scroll-0 frame
+      smoothScrollY = window.scrollY
     }, 4000)
 
-    // ── Scroll: burst-play 3–6 frames depending on intensity ─────────────
-    const onScroll = () => {
-      if (introActive || !video.duration) return
-
-      const newY = window.scrollY
-      const delta = newY - lastScrollY
-      lastScrollY = newY
-
-      if (Math.abs(delta) < 1) return
-
-      // Intensity: 0 at ≤20px delta, 1 at ≥120px delta
-      const intensity = Math.min(Math.max((Math.abs(delta) - 20) / 100, 0), 1)
-      const frames = 3 + intensity * 3          // 3–6 frames
-      const burst = frames / FPS                 // seconds to play
-
-      if (delta > 0) {
-        // Forward: extend burst window and let video play at 1x (no seeks)
-        burstEnd = Math.min(
-          Math.max(burstEnd, video.currentTime) + burst,
-          video.duration
-        )
-        if (video.paused) {
-          video.playbackRate = 1
-          video.play().then(() => { playing = true }).catch(() => {})
-        }
-      } else {
-        // Backward: one seek back by the burst amount (single seek, not per-frame)
-        const target = Math.max(0, video.currentTime - burst)
-        if (playing) { video.pause(); playing = false }
-        video.currentTime = target
-        burstEnd = target
-      }
-    }
-
-    // ── Tick: pause when burst is consumed ────────────────────────────────
+    // ── Main loop ─────────────────────────────────────────────────────────
     const tick = () => {
-      if (!introActive && playing && video.currentTime >= burstEnd) {
-        video.pause()
-        playing = false
+      if (!introActive && video.readyState >= 2 && video.duration) {
+
+        // Smooth inertia: follows real scroll with natural damping
+        smoothScrollY += (window.scrollY - smoothScrollY) * 0.12
+        smoothScrollY = Math.max(0, Math.min(scrollMax(), smoothScrollY))
+
+        const target = getTarget(smoothScrollY)
+        const diff = target - video.currentTime  // + = ahead, - = behind
+
+        if (diff > 0.015) {
+          // ── Forward: proportional rate, floor 1x so motion always feels
+          //    natural. diff*50 → 1x at diff=20ms, 2x at 40ms, 4x at 80ms+
+          const rate = Math.min(Math.max(diff * 50, 1), 4)
+          video.playbackRate = rate
+          if (!playing) {
+            video.play().then(() => { playing = true }).catch(() => {})
+          }
+
+        } else if (diff < -0.04) {
+          // ── Backward: pause + rate-limited seek (≤15/sec) so the decoder
+          //    isn't flooded. Clamp to introEndTime so video never goes
+          //    past the intro frame.
+          if (playing) { video.pause(); playing = false }
+          const now = performance.now()
+          if (now - lastSeekAt > 67) {
+            video.currentTime = Math.max(introEndTime, target)
+            lastSeekAt = now
+          }
+
+        } else if (playing && diff < 0.003) {
+          // ── At target: stop
+          video.pause()
+          playing = false
+        }
+        // Hysteresis 0.003–0.015: keep current state, prevents play/pause cycling
       }
+
       raf = requestAnimationFrame(tick)
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true })
-    raf = requestAnimationFrame(tick)
+    requestAnimationFrame(tick)
 
     return () => {
       clearTimeout(introTimeout)
-      window.removeEventListener('scroll', onScroll)
       cancelAnimationFrame(raf)
     }
   }, [])
