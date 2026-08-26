@@ -11,6 +11,7 @@ export default function VideoBackground() {
 
     let raf: number
     let introActive = true
+    let introEndTime = 0  // video.currentTime when intro finishes
     let lastScrollY = window.scrollY
     let smoothScrollY = lastScrollY
     let velocity = 0
@@ -19,10 +20,15 @@ export default function VideoBackground() {
     const scrollMax = () =>
       Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
 
-    const getTarget = (sy: number) =>
-      video.duration ? Math.min(sy / scrollMax(), 1) * video.duration : 0
+    // After intro, scroll [0 → scrollMax] maps to video [introEndTime → end]
+    // so the video continues exactly from where the intro left off.
+    const getTarget = (sy: number) => {
+      if (!video.duration) return introEndTime
+      const progress = Math.min(sy / scrollMax(), 1)
+      return introEndTime + progress * (video.duration - introEndTime)
+    }
 
-    // ── Intro: 2s autoplay on load ──────────────────────────────────────────
+    // ── Intro: 4s autoplay on load ──────────────────────────────────────────
     const startIntro = () => {
       video.currentTime = 0
       video.playbackRate = 1
@@ -39,11 +45,12 @@ export default function VideoBackground() {
       introActive = false
       video.pause()
       playing = false
+      introEndTime = video.currentTime   // freeze here, scroll continues from this frame
       smoothScrollY = window.scrollY
       lastScrollY = window.scrollY
       velocity = 0
-      video.currentTime = getTarget(window.scrollY)
-    }, 2000)
+      // Do NOT seek — video stays at the intro's last frame
+    }, 4000)
 
     // ── Scroll listener ─────────────────────────────────────────────────────
     const onScroll = () => {
