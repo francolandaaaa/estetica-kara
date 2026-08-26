@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Cormorant_Garamond } from 'next/font/google'
-import HairCanvasClient from '@/components/hero/HairCanvasClient'
+import VideoBackgroundClient from '@/components/VideoBackgroundClient'
 import './globals.css'
 
 const geist = Geist({
@@ -27,7 +27,13 @@ export default function RootLayout({
     <html lang="es" className={`${geist.variable} ${cormorant.variable}`}>
       <body className="antialiased" style={{ background: '#050505', color: '#F5F5F5' }}>
         <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-          <HairCanvasClient />
+          <VideoBackgroundClient />
+          {/* Gradient overlay: heavy at edges, lighter in center for cinematic look */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.30) 30%, rgba(5,5,5,0.30) 70%, rgba(5,5,5,0.65) 100%)',
+          }} />
         </div>
         {children}
       </body>
