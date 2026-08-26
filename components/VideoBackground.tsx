@@ -14,19 +14,19 @@ export default function VideoBackground() {
     let lastScrollY = window.scrollY
     let smoothScrollY = lastScrollY
     let velocity = 0
-    let lastSeekAt = 0
+    let playing = false
 
-    const getTarget = (sy: number) => {
-      if (!video.duration) return 0
-      const scrollMax = document.documentElement.scrollHeight - window.innerHeight
-      return Math.min(sy / Math.max(scrollMax, 1), 1) * video.duration
-    }
+    const scrollMax = () =>
+      Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
 
-    // Intro: play for 2s on load (muted autoplay always works)
+    const getTarget = (sy: number) =>
+      video.duration ? Math.min(sy / scrollMax(), 1) * video.duration : 0
+
+    // ── Intro: 2s autoplay on load ──────────────────────────────────────────
     const startIntro = () => {
       video.currentTime = 0
       video.playbackRate = 1
-      video.play().catch(() => {})
+      video.play().then(() => { playing = true }).catch(() => {})
     }
 
     if (video.readyState >= 3) {
@@ -38,45 +38,52 @@ export default function VideoBackground() {
     const introTimeout = setTimeout(() => {
       introActive = false
       video.pause()
+      playing = false
       smoothScrollY = window.scrollY
       lastScrollY = window.scrollY
+      velocity = 0
       video.currentTime = getTarget(window.scrollY)
     }, 2000)
 
+    // ── Scroll listener ─────────────────────────────────────────────────────
     const onScroll = () => {
       const newY = window.scrollY
       velocity = newY - lastScrollY
       lastScrollY = newY
     }
 
+    // ── Main loop ───────────────────────────────────────────────────────────
     const tick = () => {
       if (!introActive && video.readyState >= 2 && video.duration) {
-        // Apply scroll momentum
-        smoothScrollY += velocity * 0.4
-        velocity *= 0.82
-        const scrollMax = document.documentElement.scrollHeight - window.innerHeight
-        smoothScrollY = Math.max(0, Math.min(scrollMax, smoothScrollY))
+        // Scroll inertia: position coasts after releasing scroll
+        smoothScrollY += velocity * 0.5
+        velocity *= 0.78
+        smoothScrollY = Math.max(0, Math.min(scrollMax(), smoothScrollY))
 
         const targetTime = getTarget(smoothScrollY)
         const diff = targetTime - video.currentTime
 
-        if (diff > 0.02) {
-          // Forward: use playbackRate — video plays natively, zero seeks, perfectly smooth
-          const rate = Math.min(Math.max(diff * 7, 0.75), 4)
-          if (video.paused) video.play().catch(() => {})
+        if (diff > 0.004) {
+          // ── Forward: proportional playbackRate — zero seeking, fully smooth ──
+          // diff * 20 → rate ≈ 1x when diff = 50ms (one scroll tick of a
+          // ~20s video over a ~5000px page). Naturally scales up for fast
+          // scroll and down to a crawl when nearly synced.
+          const rate = Math.min(Math.max(diff * 20, 0.07), 4)
           video.playbackRate = rate
-        } else if (diff < -0.05) {
-          // Backward: rate-limited seek to avoid decoder overload
-          if (!video.paused) video.pause()
-          const now = performance.now()
-          if (now - lastSeekAt > 80) {
-            video.currentTime = Math.max(0, targetTime)
-            lastSeekAt = now
+          if (!playing) {
+            video.play().then(() => { playing = true }).catch(() => {})
           }
-        } else {
-          // At target: stop
-          if (!video.paused) video.pause()
+        } else if (diff < -0.06) {
+          // ── Backward: one clean seek (unavoidable, but rate-limited by
+          //    the -0.06 threshold so it only fires on meaningful scroll-up) ──
+          if (playing) { video.pause(); playing = false }
+          video.currentTime = Math.max(0, targetTime)
+        } else if (diff < 0.001 && playing) {
+          // ── At target: stop ─────────────────────────────────────────────
+          video.pause()
+          playing = false
         }
+        // Hysteresis zone 0.001–0.004: keep current state to avoid cycling
       }
 
       raf = requestAnimationFrame(tick)
@@ -102,7 +109,7 @@ export default function VideoBackground() {
         width: '100%',
         height: '100%',
         objectFit: 'cover',
-        objectPosition: 'center top',
+        objectPosition: 'center center',
         display: 'block',
         willChange: 'transform',
       }}
