@@ -215,20 +215,22 @@ function MonthCalendar({
               style={{
                 aspectRatio: '1', borderRadius: 8, fontSize: 14,
                 fontWeight: isSelected ? 600 : 300,
-                cursor: cell.disabled ? 'default' : 'pointer',
+                cursor: cell.disabled ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.18s ease',
+                opacity: cell.disabled ? 0.28 : 1,
                 background: isSelected ? GOLD
                   : isHovered ? 'rgba(232,186,208,0.12)'
                   : 'transparent',
                 border: isSelected ? 'none'
-                  : isToday ? `1px solid rgba(232,186,208,0.65)`
+                  : isToday && !cell.disabled ? `1px solid rgba(232,186,208,0.65)`
                   : isHovered ? '1px solid rgba(232,186,208,0.45)'
                   : '1px solid transparent',
                 color: isSelected ? '#050505'
-                  : cell.disabled ? 'rgba(255,255,255,0.1)'
+                  : cell.disabled ? 'rgba(255,255,255,0.55)'
                   : isToday || isHovered ? GOLD
                   : 'rgba(255,255,255,0.7)',
+                pointerEvents: cell.disabled ? 'none' : 'auto',
               }}
             >
               {cell.date.getDate()}
