@@ -15,9 +15,10 @@ export default function VideoBackground() {
     const vEl = video as any
 
     let rafId = 0
+    let rvfcId = 0          // store ID so we can cancel it properly
+    let rvfcStopped = false // flag to stop the self-scheduling RVFC chain
     let introActive = true
     let introEndTime = 0
-    let playing = false
 
     // targetTime  – where scroll says the video should be
     // lerpTime    – smoothly interpolated value we feed to currentTime
@@ -40,7 +41,7 @@ export default function VideoBackground() {
     const startIntro = () => {
       video.currentTime = 0
       video.playbackRate = 1
-      video.play().then(() => { playing = true }).catch(() => {})
+      video.play().catch(() => {})
     }
 
     if (video.readyState >= 3) startIntro()
@@ -49,9 +50,8 @@ export default function VideoBackground() {
     const introTimeout = setTimeout(() => {
       introActive = false
       video.pause()
-      playing = false
       introEndTime = video.currentTime   // freeze here — scroll 0% maps here
-      lerpTime  = video.currentTime
+      lerpTime   = video.currentTime
       targetTime = video.currentTime
     }, 4000)
 
@@ -64,57 +64,64 @@ export default function VideoBackground() {
       targetTime = computeTarget()
     }
 
-    // ── RVFC: marks when the browser has rendered the previous seek ───────
-    // This prevents over-seeking (queuing seeks faster than frames render).
+    // ── RVFC: signals when the browser has painted the previous seek ──────
+    // Prevents over-seeking (queuing seeks faster than frames can render).
+    // rvfcStopped + stored rvfcId ensure the chain is fully cancelled on unmount.
     if (supportsRVFC) {
       const onFrame = () => {
         frameReady = true
-        vEl.requestVideoFrameCallback(onFrame)
+        if (!rvfcStopped) rvfcId = vEl.requestVideoFrameCallback(onFrame)
       }
-      vEl.requestVideoFrameCallback(onFrame)
+      rvfcId = vEl.requestVideoFrameCallback(onFrame)
     }
 
-    // ── RAF loop: lerp lerpTime → targetTime, then write currentTime ──────
+    // ── RAF loop: lerp lerpTime → targetTime, write currentTime ──────────
     //
-    //  FRAME    = minimum step (one video frame at 30 fps = 0.033 s).
-    //             Prevents invisible sub-frame seeks that waste CPU with
-    //             no visible result.
+    //  LERP     = 0.07 → 7 % of remaining gap per step. Gradual approach
+    //             that feels like natural playback, not a jump. The loop
+    //             continues running after scroll stops (rAF reschedules
+    //             first, unconditionally) so the ease-out finishes smoothly.
     //
-    //  LERP     = 18 % of the remaining gap per step. Gives a natural
-    //             ease-out: fast at first, decelerates as it approaches
-    //             the target — so the video "settles" smoothly when you
-    //             stop scrolling instead of cutting hard.
+    //  FRAME    = 1/30 s → minimum step per seek. Prevents sub-frame seeks
+    //             that are invisible to the eye but burn decoder cycles.
     //
-    //  MAX_STEP = 0.2 s cap per seek. Prevents large gaps from triggering
-    //             multi-second seeks that cross many keyframes (expensive
-    //             for the decoder and visually jarring).
+    //  MAX_STEP = 0.2 s → ceiling per seek. Avoids crossing many keyframes
+    //             in one shot, which stalls the decoder and looks jarring.
 
+    const LERP     = 0.07
     const FRAME    = 1 / 30
-    const LERP     = 0.18
     const MAX_STEP = 0.2
 
     const loop = () => {
+      // Reschedule FIRST — guarantees the loop keeps running every frame
+      // even when the early-return below fires (e.g. last frame after scroll).
+      rafId = requestAnimationFrame(loop)
+
       if (!introActive && video.readyState >= 2 && video.duration) {
         const diff = targetTime - lerpTime
 
-        if (Math.abs(diff) > FRAME * 0.5) {
-          // Lerp step: at least 1 frame, at most MAX_STEP, clamped to diff
-          const raw = diff * LERP
-          const step = Math.sign(diff) *
-            Math.min(Math.max(Math.abs(raw), FRAME), MAX_STEP)
-          lerpTime += Math.abs(step) > Math.abs(diff) ? diff : step
+        // Dead zone: within half a frame → nothing left to do
+        if (Math.abs(diff) <= FRAME * 0.5) return
 
-          // Write to video only when the previous frame has been painted.
-          // Without RVFC support we write every RAF — still better than
-          // writing directly inside the scroll event.
-          if (!supportsRVFC || frameReady) {
-            video.currentTime = lerpTime
-            if (supportsRVFC) frameReady = false
-          }
+        // Step: lerp-based, floored at 1 frame, capped at MAX_STEP,
+        // clamped so we never overshoot targetTime
+        const raw  = diff * LERP
+        const step = Math.sign(diff) *
+          Math.min(Math.max(Math.abs(raw), FRAME), MAX_STEP)
+        lerpTime += Math.abs(step) > Math.abs(diff) ? diff : step
+
+        // Hard-clamp lerpTime to valid range so currentTime never receives
+        // a value outside [introEndTime, duration] (prevents micro-jumps
+        // at the extremes).
+        lerpTime = Math.min(Math.max(lerpTime, introEndTime), video.duration)
+
+        // Seek only when RVFC signals the previous frame has been painted.
+        // Falls back to every RAF frame when RVFC is not supported.
+        if (!supportsRVFC || frameReady) {
+          video.currentTime = lerpTime
+          if (supportsRVFC) frameReady = false
         }
       }
-
-      rafId = requestAnimationFrame(loop)
     }
 
     rafId = requestAnimationFrame(loop)
@@ -123,7 +130,8 @@ export default function VideoBackground() {
     return () => {
       clearTimeout(introTimeout)
       cancelAnimationFrame(rafId)
-      if (supportsRVFC) vEl.cancelVideoFrameCallback?.()
+      rvfcStopped = true
+      if (supportsRVFC && rvfcId) vEl.cancelVideoFrameCallback(rvfcId)
       window.removeEventListener('scroll', onScroll)
     }
   }, [])
