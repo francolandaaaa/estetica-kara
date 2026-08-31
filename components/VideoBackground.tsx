@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const TOTAL   = 192          // frame_001.jpg … frame_192.jpg
-const FPS     = 24
-const INTRO_S = 3.2          // seconds of auto-play on load (~0.1s less than previous 3.3s)
-// Last frame index (0-based) shown during intro  →  frame_077.jpg
+const TOTAL    = 192
+const FPS      = 24
+const INTRO_S  = 3.2
 const INTRO_END = Math.min(Math.round(FPS * INTRO_S) - 1, TOTAL - 1)
+// Background doesn't need full retina resolution — cap DPR to limit canvas pixel budget.
+const MAX_DPR  = 1.5
 
 const frameSrc = (i: number) =>
   `/frames/frame_${String(i + 1).padStart(3, '0')}.jpg`
@@ -20,46 +21,47 @@ export default function VideoBackground() {
     const ctx    = canvas?.getContext('2d')
     if (!canvas || !ctx) return
 
-    const dpr = window.devicePixelRatio || 1
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
 
-    // Mutable state shared across closures
-    let cancelled   = false
-    let rafId       = 0
-    let currentIdx  = 0
+    let cancelled    = false
+    let rafId        = 0
+    let currentIdx   = 0
+    let loopRunning  = false
     let removeScroll: () => void = () => {}
 
-    // ── Frame array declared first so sizeCanvas can reference it ─────────
     const frames = new Array<HTMLImageElement>(TOTAL)
 
-    // ── Canvas sizing ─────────────────────────────────────────────────────
-    // Multiplied by dpr for sharp rendering on retina / high-DPI displays.
-    // CSS width/height stays at 100% (set in JSX), so the element fills the
-    // container while the pixel buffer is high-resolution.
+    // ── Draw cache — updated once on resize, not on every drawImage call ──
+    // All 192 frames are 1280×720; scale+offset only changes when canvas resizes.
+    let ddx = 0, ddy = 0, ddw = 0, ddh = 0
+
+    const updateDrawCache = () => {
+      const cw = canvas.width, ch = canvas.height
+      const iw = frames[0]?.naturalWidth  || 1280
+      const ih = frames[0]?.naturalHeight || 720
+      const s  = Math.max(cw / iw, ch / ih)
+      ddx = Math.round((cw - iw * s) / 2)
+      ddy = Math.round((ch - ih * s) / 2)
+      ddw = Math.round(iw * s)
+      ddh = Math.round(ih * s)
+    }
+
+    // ── Canvas sizing ────────────────────────────────────────────────────
     const sizeCanvas = () => {
       canvas.width  = Math.round(window.innerWidth  * dpr)
       canvas.height = Math.round(window.innerHeight * dpr)
-      // Re-draw current frame so canvas isn't blank after orientation change
-      const img = frames[currentIdx]
-      if (img?.naturalWidth) drawCover(img)
+      updateDrawCache()
+      if (frames[currentIdx]?.naturalWidth) drawFrame(frames[currentIdx])
     }
     window.addEventListener('resize', sizeCanvas)
     sizeCanvas()
 
-    // ── object-fit: cover equivalent ──────────────────────────────────────
-    const drawCover = (img: HTMLImageElement) => {
-      const cw = canvas.width, ch = canvas.height
-      const iw = img.naturalWidth, ih = img.naturalHeight
-      const s  = Math.max(cw / iw, ch / ih)
-      ctx.drawImage(img,
-        (cw - iw * s) / 2, (ch - ih * s) / 2,
-        iw * s, ih * s,
-      )
+    // ── Single drawImage with pre-computed integer coords ────────────────
+    const drawFrame = (img: HTMLImageElement) => {
+      ctx.drawImage(img, ddx, ddy, ddw, ddh)
     }
 
-    // ── Preload: decode all frames off the main thread before starting ─────
-    // img.decode() returns a Promise that resolves when the browser has fully
-    // decoded the image and it's ready for instant drawImage — no decode stall
-    // on first paint. Errors are swallowed so one bad file doesn't stall init.
+    // ── Preload ──────────────────────────────────────────────────────────
     Promise.all(
       Array.from({ length: TOTAL }, (_, i) => {
         const img = new Image()
@@ -69,33 +71,29 @@ export default function VideoBackground() {
       }),
     ).then(() => {
       if (cancelled) return
+      updateDrawCache()   // now frames[0].naturalWidth is real
       setReady(true)
       runIntro()
     })
 
-    // ── Intro: step through frames 0 → INTRO_END at FPS ──────────────────
-    // Uses canvas + requestAnimationFrame so there are NO autoplay
-    // restrictions (no <video> element, no audio, works on all mobile).
+    // ── Intro ────────────────────────────────────────────────────────────
     let introEndIdx = INTRO_END
 
     const runIntro = () => {
-      drawCover(frames[0])
+      if (frames[0]?.naturalWidth) drawFrame(frames[0])
       currentIdx = 0
       const t0 = performance.now()
 
       const tick = (now: number) => {
         if (cancelled) return
-        const idx = Math.min(
-          Math.round(((now - t0) / 1000) * FPS),
-          INTRO_END,
-        )
+        const idx = Math.min(Math.round(((now - t0) / 1000) * FPS), INTRO_END)
         if (idx !== currentIdx && frames[idx]?.naturalWidth) {
-          drawCover(frames[idx])
+          drawFrame(frames[idx])
           currentIdx = idx
         }
         if (idx >= INTRO_END) {
           introEndIdx = currentIdx
-          runScrubbing()          // hand off to scroll-driven mode
+          runScrubbing()
         } else {
           rafId = requestAnimationFrame(tick)
         }
@@ -103,13 +101,9 @@ export default function VideoBackground() {
       rafId = requestAnimationFrame(tick)
     }
 
-    // ── Scroll scrubbing ──────────────────────────────────────────────────
-    // scroll 0%   →  introEndIdx   (the frozen intro frame)
-    // scroll 100% →  TOTAL − 1    (last image)
-    //
-    // targetIdx is set in the (throttle-free) scroll listener.
-    // lerpIdx is interpolated toward targetIdx inside RAF — never inside
-    // the scroll event — so the drawing stays on the compositor thread.
+    // ── Scroll scrubbing — RAF pauses when lerp converges ────────────────
+    // RAF is only active while there are frames left to interpolate toward.
+    // The scroll listener restarts it whenever the target changes.
     const runScrubbing = () => {
       const getScrollMax = () =>
         Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
@@ -122,31 +116,35 @@ export default function VideoBackground() {
       let targetIdx: number = introEndIdx
       let lerpIdx:   number = introEndIdx
 
-      // Scroll listener only writes a number — O(1), no DOM work
-      const onScroll = () => { targetIdx = computeTarget() }
-      window.addEventListener('scroll', onScroll, { passive: true })
-      removeScroll = () => window.removeEventListener('scroll', onScroll)
-
       const loop = () => {
-        rafId = requestAnimationFrame(loop)   // reschedule first — always runs
-        if (cancelled) return
-
         const diff = targetIdx - lerpIdx
-        if (Math.abs(diff) < 0.5) return     // within half a frame → done
+        if (Math.abs(diff) < 0.5) {
+          loopRunning = false
+          return              // converged — stop until next scroll
+        }
 
-        lerpIdx += diff * 0.12               // ease-out: 12% of gap per frame
-        const idx = Math.round(
-          Math.min(Math.max(lerpIdx, introEndIdx), TOTAL - 1),
-        )
+        rafId = requestAnimationFrame(loop)
+
+        lerpIdx += diff * 0.16   // 0.16 > 0.12: more responsive, still smooth
+        const idx = Math.round(Math.min(Math.max(lerpIdx, introEndIdx), TOTAL - 1))
         if (idx !== currentIdx && frames[idx]?.naturalWidth) {
-          drawCover(frames[idx])
+          drawFrame(frames[idx])
           currentIdx = idx
         }
       }
-      rafId = requestAnimationFrame(loop)
+
+      const onScroll = () => {
+        targetIdx = computeTarget()
+        if (!loopRunning) {     // kick-start RAF only when it isn't already running
+          loopRunning = true
+          rafId = requestAnimationFrame(loop)
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true })
+      removeScroll = () => window.removeEventListener('scroll', onScroll)
     }
 
-    // ── Cleanup ───────────────────────────────────────────────────────────
     return () => {
       cancelled = true
       cancelAnimationFrame(rafId)
@@ -157,7 +155,6 @@ export default function VideoBackground() {
 
   return (
     <>
-      {/* Dark screen while frames are decoding — removed once ready */}
       {!ready && (
         <div style={{ position: 'absolute', inset: 0, background: '#050505' }} />
       )}
