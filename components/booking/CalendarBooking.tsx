@@ -20,7 +20,6 @@ const SERVICIOS_LISTA = [
   { nombre: 'Otro',                duracionDefault: 60  },
 ]
 
-const DURACIONES = [30, 45, 60, 75, 90, 120]
 
 // ─── types ────────────────────────────────────────────────────────────────────
 interface DayCell { date: Date | null; disabled: boolean }
@@ -264,7 +263,7 @@ function ServicePicker({
   const [showForm, setShowForm]           = useState(servicios.length === 0)
   const [pendingNombre,   setPendingNombre]   = useState('')
   const [pendingDuracion, setPendingDuracion] = useState(0)
-  const [errors, setErrors]               = useState<{ nombre?: boolean; duracion?: boolean }>({})
+  const [errors, setErrors]               = useState<{ nombre?: boolean }>({})
 
   // If all services are removed, re-show the form
   useEffect(() => {
@@ -283,8 +282,7 @@ function ServicePicker({
 
   function handleAdd() {
     const errs: typeof errors = {}
-    if (!pendingNombre)   errs.nombre   = true
-    if (!pendingDuracion) errs.duracion = true
+    if (!pendingNombre) errs.nombre = true
     if (Object.keys(errs).length) { setErrors(errs); return }
     onAdd({ nombre: pendingNombre, duracion: pendingDuracion })
     setPendingNombre('')
@@ -435,30 +433,25 @@ function ServicePicker({
                 ))}
               </select>
 
-              {/* Duración */}
-              <select
-                value={pendingDuracion || ''}
-                onChange={e => {
-                  setPendingDuracion(Number(e.target.value))
-                  setErrors(prev => ({ ...prev, duracion: false }))
-                }}
-                style={{
-                  ...selectSt,
-                  borderColor: errors.duracion ? 'rgba(255,100,100,0.6)' : 'rgba(255,255,255,0.12)',
-                  color: pendingDuracion ? '#F5F5F5' : 'rgba(255,255,255,0.38)',
-                }}
-              >
-                <option value="" disabled style={{ background: '#0A0A0A' }}>Tiempo estimado</option>
-                {DURACIONES.map(d => (
-                  <option key={d} value={d} style={{ background: '#0A0A0A', color: '#F5F5F5' }}>
-                    {formatDuracion(d)}
-                  </option>
-                ))}
-              </select>
+              {/* Duración estimada — información, no editable */}
+              {pendingNombre && (
+                <div style={{
+                  padding: '12px 16px',
+                  background: 'rgba(232,186,208,0.04)',
+                  border: '1px solid rgba(232,186,208,0.15)',
+                  borderRadius: 8,
+                  fontSize: 13,
+                  letterSpacing: '0.04em',
+                  color: 'rgba(255,255,255,0.45)',
+                }}>
+                  Duración estimada:{' '}
+                  <span style={{ color: '#E8BAD0' }}>{formatDuracion(pendingDuracion)}</span>
+                </div>
+              )}
 
-              {(errors.nombre || errors.duracion) && (
+              {errors.nombre && (
                 <p style={{ color: 'rgba(255,100,100,0.75)', fontSize: 12, letterSpacing: '0.04em' }}>
-                  Por favor selecciona el servicio y el tiempo estimado.
+                  Por favor selecciona el servicio.
                 </p>
               )}
 
