@@ -43,7 +43,7 @@ export default function MapSection() {
         >
           <iframe
             title="Ubicación Estética Kara"
-            src="https://maps.google.com/maps?q=Est%C3%A9tica+Kara&output=embed&hl=es&z=15"
+            src="https://maps.google.com/maps?q=Revoluci%C3%B3n+Pte.+29%2C+Santiago+Momoxpan%2C+72775+San+Pedro+Cholula%2C+Pue.&output=embed&hl=es&z=15"
             width="100%"
             height="100%"
             style={{ border: 0, display: 'block', filter: 'grayscale(20%) contrast(1.05)' }}
@@ -72,11 +72,11 @@ export default function MapSection() {
               }}
             />
             <p className="text-base" style={{ color: 'rgba(255,255,255,0.5)' }}>
-              Estética Kara — Tu ciudad, México
+              Revolución Pte. 29, Santiago Momoxpan, 72775 San Pedro Cholula, Pue.
             </p>
           </div>
           <a
-            href="https://maps.google.com/maps?q=Est%C3%A9tica+Kara"
+            href="https://maps.google.com/maps?q=Revoluci%C3%B3n+Pte.+29%2C+Santiago+Momoxpan%2C+72775+San+Pedro+Cholula%2C+Pue."
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm tracking-[0.2em] uppercase transition-colors duration-300"
