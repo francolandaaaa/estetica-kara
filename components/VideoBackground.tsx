@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 
 const TOTAL   = 192          // frame_001.jpg … frame_192.jpg
 const FPS     = 24
-const INTRO_S = 3.5          // seconds of auto-play on load (stops 0.5s before old end)
-// Last frame index (0-based) shown during intro  →  frame_084.jpg
-const INTRO_END = Math.min(Math.round(FPS * INTRO_S) - 1, TOTAL - 1)
+// Intro stops 0.2 s before the last frame (5 frames short of TOTAL-1)
+const INTRO_END = TOTAL - 1 - Math.round(FPS * 0.2)  // 191 - 5 = 186  →  frame_187.jpg
 
 const frameSrc = (i: number) =>
   `/frames/frame_${String(i + 1).padStart(3, '0')}.jpg`
