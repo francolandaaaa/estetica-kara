@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 
 const TOTAL   = 192          // frame_001.jpg … frame_192.jpg
 const FPS     = 24
-const INTRO_S = 3.3          // seconds of auto-play on load (~0.2s less than previous 3.5s)
-// Last frame index (0-based) shown during intro  →  frame_079.jpg
+const INTRO_S = 3.2          // seconds of auto-play on load (~0.1s less than previous 3.3s)
+// Last frame index (0-based) shown during intro  →  frame_077.jpg
 const INTRO_END = Math.min(Math.round(FPS * INTRO_S) - 1, TOTAL - 1)
 
 const frameSrc = (i: number) =>
