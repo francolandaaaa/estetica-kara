@@ -960,9 +960,14 @@ export default function CalendarBooking() {
           duracionTotal: total,
         }),
       })
-      if (!res.ok) throw new Error()
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.detail || data.error || 'Error desconocido')
+      }
       setStatus('success')
-    } catch {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error desconocido'
+      alert('Error: ' + msg)
       setStatus('error')
       setTimeout(() => setStatus('idle'), 4000)
     }
