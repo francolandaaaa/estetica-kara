@@ -29,7 +29,7 @@ export interface ServicioSeleccionado { nombre: string; duracion: number }
 interface FormData { nombre: string; telefono: string }
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
-function buildCalendar(year: number, month: number): DayCell[] {
+function buildCalendar(year: number, month: number, busyDays: string[] = []): DayCell[] {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const first = new Date(year, month, 1)
@@ -40,7 +40,8 @@ function buildCalendar(year: number, month: number): DayCell[] {
   for (let d = 1; d <= last.getDate(); d++) {
     const date = new Date(year, month, d)
     date.setHours(0, 0, 0, 0)
-    cells.push({ date, disabled: date < today || date.getDay() === 0 })
+    const fullyBooked = busyDays.includes(dateKey(date))
+    cells.push({ date, disabled: date < today || date.getDay() === 0 || fullyBooked })
   }
   return cells
 }
@@ -890,9 +891,18 @@ export default function CalendarBooking() {
   const [form,         setForm]         = useState<FormData>({ nombre: '', telefono: '' })
   const [status,       setStatus]       = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [direction,    setDirection]    = useState(1)
+  const [busyDays,     setBusyDays]     = useState<string[]>([])
 
-  const cells = buildCalendar(viewYear, viewMonth)
+  const cells = buildCalendar(viewYear, viewMonth, busyDays)
   const total = totalMinutos(servicios)
+
+  // Fetch fully-booked days whenever the visible month changes
+  useEffect(() => {
+    fetch(`/api/calendar/busy-days?year=${viewYear}&month=${viewMonth + 1}`)
+      .then(r => r.json())
+      .then(data => setBusyDays(data.busyDays ?? []))
+      .catch(() => setBusyDays([]))
+  }, [viewYear, viewMonth])
 
   // Fetch availability when entering the time step
   useEffect(() => {
@@ -960,14 +970,9 @@ export default function CalendarBooking() {
           duracionTotal: total,
         }),
       })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.detail || data.error || 'Error desconocido')
-      }
+      if (!res.ok) throw new Error()
       setStatus('success')
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido'
-      alert('Error: ' + msg)
+    } catch {
       setStatus('error')
       setTimeout(() => setStatus('idle'), 4000)
     }

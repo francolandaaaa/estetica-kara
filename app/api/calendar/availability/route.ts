@@ -37,9 +37,10 @@ export async function GET(req: NextRequest) {
   try {
     const { google } = await import('googleapis')
 
+    const normalizedKey = svcKey.includes('\\n') ? svcKey.replace(/\\n/g, '\n') : svcKey
     const auth = new google.auth.JWT({
-      email: svcEmail,
-      key:   svcKey.replace(/\\n/g, '\n'),
+      email:  svcEmail,
+      key:    normalizedKey,
       scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
     })
 

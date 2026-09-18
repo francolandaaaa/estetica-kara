@@ -67,10 +67,8 @@ export async function POST(req: NextRequest) {
           colorId: '5',
         },
       })
-    } catch (err: unknown) {
+    } catch (err) {
       console.error('[calendar/book] Google Calendar:', err)
-      const msg = err instanceof Error ? err.message : String(err)
-      return NextResponse.json({ error: 'Google Calendar falló', detail: msg }, { status: 500 })
     }
   }
 
