@@ -43,22 +43,22 @@ export default function Footer() {
             <ul className="space-y-3 text-base" style={{ color: 'rgba(255,255,255,0.38)' }}>
               <li>
                 <a
-                  href="mailto:franco.landac@gmail.com"
+                  href="mailto:esteticakara.citas@gmail.com"
                   className="transition-colors duration-300"
                   onMouseEnter={e => { e.currentTarget.style.color = '#E8BAD0' }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
                 >
-                  franco.landac@gmail.com
+                  esteticakara.citas@gmail.com
                 </a>
               </li>
               <li>
                 <a
-                  href="tel:+525512345678"
+                  href="tel:+522224278565"
                   className="transition-colors duration-300"
                   onMouseEnter={e => { e.currentTarget.style.color = '#E8BAD0' }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)' }}
                 >
-                  +52 55 1234 5678
+                  222 427 8565
                 </a>
               </li>
               <li style={{ color: 'rgba(255,255,255,0.25)' }}>Lun – Sáb: 9:00 – 19:00</li>

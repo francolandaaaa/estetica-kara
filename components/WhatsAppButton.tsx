@@ -1,7 +1,7 @@
 'use client'
 
 // Update WHATSAPP_NUMBER with the real number (country code + digits, no spaces or dashes)
-const WHATSAPP_NUMBER = '525512345678'
+const WHATSAPP_NUMBER = '522224278565'
 
 export default function WhatsAppButton() {
   return (
